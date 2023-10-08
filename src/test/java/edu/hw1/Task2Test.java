@@ -21,7 +21,7 @@ public class Task2Test {
         times.put("100:25", 100 * 60 + 25);
         times.put("999:59", 999 * 60 + 59);
         for (Map.Entry<String, Integer> pair : times.entrySet()) {
-            int seconds = Task2.convertTimeToSeconds(pair.getKey());
+            int seconds = Task2.minutesToSeconds(pair.getKey());
             assertEquals(pair.getValue().intValue(), seconds);
         }
     }
@@ -37,7 +37,7 @@ public class Task2Test {
         times.put("-01:00", -1);
         times.put("-00:-00", -1);
         for (Map.Entry<String, Integer> pair : times.entrySet()) {
-            int seconds = Task2.convertTimeToSeconds(pair.getKey());
+            int seconds = Task2.minutesToSeconds(pair.getKey());
             assertEquals(pair.getValue().intValue(), seconds);
         }
     }
@@ -59,7 +59,7 @@ public class Task2Test {
         times.put("ab:01", -1);
         times.put("01:ab", -1);
         for (Map.Entry<String, Integer> pair : times.entrySet()) {
-            int seconds = Task2.convertTimeToSeconds(pair.getKey());
+            int seconds = Task2.minutesToSeconds(pair.getKey());
             assertEquals(pair.getValue().intValue(), seconds);
         }
     }

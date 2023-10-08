@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class Task3Test {
     @Test
     @DisplayName("Подсчёт количества цифр в числе")
-    void convertCorrectTimeToSeconds() {
+    void checkCountDigits() {
         Map<Integer, Integer> values = new HashMap<Integer, Integer>();
         values.put(123, 3);
         values.put(12, 2);
@@ -23,7 +23,7 @@ public class Task3Test {
         values.put(-123, 3);
         values.put(-100, 3);
         for (Map.Entry<Integer, Integer> pair : values.entrySet()) {
-            int amountOfDigit = Task3.countNumberOfDigitsInValue(pair.getKey());
+            int amountOfDigit = Task3.countDigits(pair.getKey());
             assertEquals(pair.getValue(), amountOfDigit);
         }
     }

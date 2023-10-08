@@ -33,7 +33,7 @@ public class Task2 {
         return seconds >= 0 && seconds < 60 && minutes >= 0;
     }
 
-    public static int convertTimeToSeconds(String time) {
+    public static int minutesToSeconds(String time) {
         if (!isCorrectTimeFormat(time)) {
             return -1;
         }
