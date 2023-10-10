@@ -1,9 +1,6 @@
 package edu.hw1;
 
 public class Task5 {
-    private Task5() {
-
-    }
 
     public static boolean isPalindrome(String word) {
         String currentWord = word;
@@ -46,4 +43,9 @@ public class Task5 {
         }
         return isPalindromeDescendant(getDescendantOfNumber(number));
     }
+
+    private Task5() {
+
+    }
+
 }

@@ -9,6 +9,14 @@ public class Task1 {
 
     }
 
+    public static int minutesToSeconds(String time) {
+        if (!isCorrectTimeFormat(time)) {
+            return -1;
+        }
+        int[] timeParts = Arrays.stream(time.split(":")).mapToInt(Integer::parseInt).toArray();
+        return timeParts[0] * SECONDS_PER_MINUTE + timeParts[1];
+    }
+
     private static boolean isMinusAndPlusInTime(String time) {
         for (int i = 0; i < time.length(); ++i) {
             if (time.charAt(i) == '-' || time.charAt(i) == '+') {
@@ -38,11 +46,4 @@ public class Task1 {
         return seconds >= 0 && seconds < SECONDS_PER_MINUTE && minutes >= 0;
     }
 
-    public static int minutesToSeconds(String time) {
-        if (!isCorrectTimeFormat(time)) {
-            return -1;
-        }
-        int[] timeParts = Arrays.stream(time.split(":")).mapToInt(Integer::parseInt).toArray();
-        return timeParts[0] * SECONDS_PER_MINUTE + timeParts[1];
-    }
 }

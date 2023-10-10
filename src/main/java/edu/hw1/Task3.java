@@ -3,9 +3,6 @@ package edu.hw1;
 import java.util.Arrays;
 
 public class Task3 {
-    private Task3() {
-
-    }
 
     public static boolean isNestable(int[] firstArray, int[] secondArray) {
         if (firstArray.length == 0 || secondArray.length == 0) {
@@ -17,4 +14,9 @@ public class Task3 {
         int maxSecond = Arrays.stream(secondArray).max().getAsInt();
         return minFirst > minSecond && maxFirst < maxSecond;
     }
+
+    private Task3() {
+
+    }
+
 }

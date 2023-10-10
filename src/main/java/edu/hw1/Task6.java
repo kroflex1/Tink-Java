@@ -11,6 +11,10 @@ public class Task6 {
     private static final int MIN_VALUE = 1000;
     private static final int NUMBER_SYSTEM = 10;
 
+    public static int findAmountOfStepsToReachKapekarValue(int value) {
+        return calculateNumberOfSteps(value, 0);
+    }
+
     private Task6() {
 
     }
@@ -81,7 +85,4 @@ public class Task6 {
         return calculateNumberOfSteps(newValue, step + 1);
     }
 
-    public static int findAmountOfStepsToReachKapekarValue(int value) {
-        return calculateNumberOfSteps(value, 0);
-    }
 }
