@@ -11,20 +11,23 @@ public class Task5 {
         return true;
     }
 
-    public static boolean isPalindromeDescendant(int number) {
-        String currentNumber = String.valueOf(number);
+    public static boolean isPalindromeDescendant(int number){
         if (number < 0) {
             throw new IllegalArgumentException("Number must be positive");
         }
-        if (currentNumber.length() == 1) {
+        return isPalindromeDescendant(String.valueOf(number));
+    }
+
+    private static boolean isPalindromeDescendant(String number) {
+        if (number.length() == 1) {
             return false;
         }
-        if (isPalindrome(currentNumber)) {
+        if (isPalindrome(number)) {
             return true;
         }
-        if (currentNumber.length() % 2 != 0) {
+        if (number.length() % 2 != 0) {
             throw new IllegalArgumentException(String.format(
-                "{%d isn`t a palindrome, it`s impossible to get its descendant since it contains odd number of digits",
+                "{%s isn`t a palindrome, it`s impossible to get its descendant since it contains odd number of digits",
                 number
             )
             );
@@ -36,15 +39,14 @@ public class Task5 {
 
     }
 
-    private static int getDescendantOfNumber(int number) {
-        String currentNumber = String.valueOf(number);
+    private static String getDescendantOfNumber(String number) {
         StringBuilder descendant = new StringBuilder();
-        for (int i = 0; i < currentNumber.length() - 1; i += 2) {
+        for (int i = 0; i < number.length() - 1; i += 2) {
             descendant.append(
-                Character.getNumericValue(currentNumber.charAt(i))
-                    + Character.getNumericValue(currentNumber.charAt(i + 1)));
+                Character.getNumericValue(number.charAt(i))
+                    + Character.getNumericValue(number.charAt(i + 1)));
         }
-        return Integer.parseInt(descendant.toString());
+        return descendant.toString();
     }
 
 }
