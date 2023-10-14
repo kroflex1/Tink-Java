@@ -11,7 +11,7 @@ public class Task5 {
         return true;
     }
 
-    public static boolean isPalindromeDescendant(int number){
+    public static boolean isPalindromeDescendant(int number) {
         if (number < 0) {
             throw new IllegalArgumentException("Number must be positive");
         }

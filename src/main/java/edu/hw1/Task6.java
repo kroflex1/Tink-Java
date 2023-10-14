@@ -2,9 +2,7 @@ package edu.hw1;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Task6 {
     private static final int CONSTANT_KARPEKAR = 6174;
@@ -69,11 +67,11 @@ public class Task6 {
     }
 
     private static int convertListToInt(List<Integer> sortedDigits) {
-        int Value = 0;
+        int value = 0;
         for (int digit : sortedDigits) {
-            Value = Value * 10 + digit;
+            value = value * NUMBER_SYSTEM + digit;
         }
-        return Value;
+        return value;
     }
 
 }
