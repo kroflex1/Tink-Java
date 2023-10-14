@@ -1,66 +1,42 @@
 package edu.hw1;
 
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import java.util.HashMap;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 public class Task1Test {
-    @Test
+    @ParameterizedTest
+    @CsvSource(value = {
+        "10:25, 625",
+        "10:01, 601",
+        "00:01, 1",
+        "01:00, 60",
+        "00:00, 0",
+        "100:25, 6025",
+        "999:59, 59999",
+    }, ignoreLeadingAndTrailingWhitespace = true)
     @DisplayName("Перевод корректного формата времени в секунды")
-    void convertCorrectTimeToSeconds() {
-        Map<String, Integer> times = new HashMap<String, Integer>();
-        times.put("10:25", 10 * 60 + 25);
-        times.put("10:01", 10 * 60 + 1);
-        times.put("00:01", 1);
-        times.put("01:00", 60);
-        times.put("00:00", 0);
-        times.put("100:25", 100 * 60 + 25);
-        times.put("999:59", 999 * 60 + 59);
-        for (Map.Entry<String, Integer> pair : times.entrySet()) {
-            int seconds = Task1.minutesToSeconds(pair.getKey());
-            assertEquals(pair.getValue().intValue(), seconds);
-        }
+    void convertCorrectTimeToSeconds(String time, int seconds) {
+        assertEquals(seconds, Task1.minutesToSeconds(time));
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = {"10:-25", "-10:25", "-10:-25", "00:-01", "-01:00", "-00:-00"})
     @DisplayName("Отрицательные числа в формате времени")
-    void convertNegativeTimeToSeconds() {
-        Map<String, Integer> times = new HashMap<String, Integer>();
-        times.put("10:-25", -1);
-        times.put("-10:25", -1);
-        times.put("-10:-25", -1);
-        times.put("00:-01", -1);
-        times.put("-01:00", -1);
-        times.put("-00:-00", -1);
-        for (Map.Entry<String, Integer> pair : times.entrySet()) {
-            int seconds = Task1.minutesToSeconds(pair.getKey());
-            assertEquals(pair.getValue().intValue(), seconds);
-        }
+    void convertNegativeTimeToSeconds(String time) {
+        assertEquals(-1, Task1.minutesToSeconds(time));
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = {"01:60", "+01:00", "+00:+01", "25", "00:00:12", ":15", "15:", ":15:", "ABCD", "ab:cd",
+        "ab:01", "01:ab"})
     @DisplayName("Неверный формат времени")
-    void convertInvalidTimeToSeconds() {
-        Map<String, Integer> times = new HashMap<String, Integer>();
-        times.put("01:60", -1);
-        times.put("+01:00", -1);
-        times.put("+00:+01", -1);
-        times.put("25", -1);
-        times.put("00:00:12", -1);
-        times.put(":15", -1);
-        times.put("15:", -1);
-        times.put(":15:", -1);
-        times.put("ABCD", -1);
-        times.put("ab:cd", -1);
-        times.put("ab:01", -1);
-        times.put("01:ab", -1);
-        for (Map.Entry<String, Integer> pair : times.entrySet()) {
-            int seconds = Task1.minutesToSeconds(pair.getKey());
-            assertEquals(pair.getValue().intValue(), seconds);
-        }
+    void convertInvalidTimeToSeconds(String time) {
+        assertEquals(-1, Task1.minutesToSeconds(time));
     }
 }

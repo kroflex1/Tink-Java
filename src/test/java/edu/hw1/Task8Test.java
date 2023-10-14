@@ -72,7 +72,7 @@ public class Task8Test {
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
             Task8.knightBoardCapture(table));
         assertEquals("The numbers on the table must be equal to zero or one", exception.getMessage());
-   }
+    }
 
     @Test
     @DisplayName("Некорректный размер стола")
@@ -82,6 +82,24 @@ public class Task8Test {
             {0, 1, 0, 1},
             {0, 0, 0, 0},
             {0, 0, 1, 4},
+            {1, 0, 0, 0},
+        };
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+            Task8.knightBoardCapture(table));
+        assertEquals("The table should be 8x8 in size", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Некорректный размер стола 2")
+    void invalidTableSize2() {
+        int[][] table = {
+            {1, 0, 1, 0, 1, 0, 1, 1},
+            {0, 1, 0, 1},
+            {0, 0, 0, 0},
+            {0, 0, 1, 1},
+            {1, 0, 0, 0},
+            {1, 0, 0, 0},
+            {1, 0, 0, 0},
             {1, 0, 0, 0},
         };
         Exception exception = assertThrows(IllegalArgumentException.class, () ->

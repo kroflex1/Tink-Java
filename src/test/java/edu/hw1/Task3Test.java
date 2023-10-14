@@ -57,14 +57,14 @@ public class Task3Test {
                     Task3.isNestable(firstArray, secondArray));
             },
             () -> {
-                int[] firstArray = new int[] {};
-                int[] secondArray = new int[] {1, 3};
+                int[] firstArray = new int[] {1,3};
+                int[] secondArray = new int[] {};
                 assertThrows(IllegalArgumentException.class, () ->
                     Task3.isNestable(firstArray, secondArray));
             },
             () -> {
                 int[] firstArray = new int[] {};
-                int[] secondArray = new int[] {1, 3};
+                int[] secondArray = new int[] {};
                 assertThrows(IllegalArgumentException.class, () ->
                     Task3.isNestable(firstArray, secondArray));
             }

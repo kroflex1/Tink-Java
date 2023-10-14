@@ -5,13 +5,18 @@ public class Task8 {
     private static final int AMOUNT_OF_ROWS = 8;
     private static final int AMOUNT_OF_COLUMNS = 8;
     private static final int MAX_OFFSET = 2;
+    private static final String ERROR_SIZE_MESSAGE =
+        String.format("The table should be %dx%d in size", AMOUNT_OF_ROWS, AMOUNT_OF_COLUMNS);
 
     public static boolean knightBoardCapture(int[][] table) {
-        if (table.length != AMOUNT_OF_ROWS || table[0].length != AMOUNT_OF_COLUMNS) {
-            throw new IllegalArgumentException("The table should be 8x8 in size");
+        if (table.length != AMOUNT_OF_ROWS) {
+            throw new IllegalArgumentException(ERROR_SIZE_MESSAGE);
         }
         for (int row = 0; row < table.length; ++row) {
             for (int column = 0; column < table[0].length; ++column) {
+                if (table[column].length != AMOUNT_OF_COLUMNS) {
+                    throw new IllegalArgumentException(ERROR_SIZE_MESSAGE);
+                }
                 if (table[row][column] != 0 && table[row][column] != 1) {
                     throw new IllegalArgumentException("The numbers on the table must be equal to zero or one");
                 }
@@ -26,8 +31,6 @@ public class Task8 {
     }
 
     private static boolean isHorseColliding(int[][] table, int horseRow, int horseColumn) {
-        int rows = table.length;
-        int columns = table[0].length;
         for (int rowOffset = -MAX_OFFSET; rowOffset <= MAX_OFFSET; ++rowOffset) {
             for (int columnOffset = -MAX_OFFSET; columnOffset <= MAX_OFFSET; ++columnOffset) {
                 if (Math.abs(rowOffset) == Math.abs(columnOffset) || rowOffset == 0 || columnOffset == 0) {
@@ -35,7 +38,8 @@ public class Task8 {
                 }
                 int currentRow = horseRow + rowOffset;
                 int currentColumn = horseColumn + columnOffset;
-                if (currentRow >= 0 && currentRow < rows && currentColumn >= 0 && currentColumn < columns) {
+                if (currentRow >= 0 && currentRow < AMOUNT_OF_ROWS && currentColumn >= 0
+                    && currentColumn < AMOUNT_OF_COLUMNS) {
                     if (table[currentRow][currentColumn] == 1) {
                         return true;
                     }

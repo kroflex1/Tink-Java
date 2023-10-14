@@ -1,43 +1,33 @@
 package edu.hw1;
 
+
 public class Task7 {
 
     public static int rotateRight(int n, int shift) {
         checkValues(n, shift);
-        String binaryValue = Integer.toBinaryString(n);
-        for (int i = 0; i < shift; ++i) {
-            binaryValue = shiftRight(binaryValue);
-        }
-        return Integer.parseInt(binaryValue, 2);
+        return rotate(n, shift);
+
     }
 
     public static int rotateLeft(int n, int shift) {
         checkValues(n, shift);
-        String binaryValue = Integer.toBinaryString(n);
-        for (int i = 0; i < shift; ++i) {
-            binaryValue = shiftLeft(binaryValue);
-        }
-        return Integer.parseInt(binaryValue, 2);
+        return rotate(n, -shift);
     }
 
-    private static String shiftLeft(String binaryValue) {
-        char[] newBinaryValue = binaryValue.toCharArray();
-        char firstSymbol = newBinaryValue[0];
-        for (int i = 0; i < newBinaryValue.length - 1; ++i) {
-            newBinaryValue[i] = newBinaryValue[i + 1];
+    private static int rotate(int value, int shift) {
+        char[] binaryValue = Integer.toBinaryString(value).toCharArray();
+        char[] binaryValueCopy = binaryValue.clone();
+        if (shift % binaryValue.length == 0) {
+            return value;
         }
-        newBinaryValue[newBinaryValue.length - 1] = firstSymbol;
-        return new String(newBinaryValue);
-    }
-
-    private static String shiftRight(String binaryValue) {
-        char[] newBinaryValue = binaryValue.toCharArray();
-        char lastSymbol = newBinaryValue[newBinaryValue.length - 1];
-        for (int i = newBinaryValue.length - 1; i >= 1; --i) {
-            newBinaryValue[i] = newBinaryValue[i - 1];
+        int newPositionForSymbol;
+        for (int i = 0; i < binaryValue.length; ++i) {
+            newPositionForSymbol = (i + shift) % binaryValue.length;
+            newPositionForSymbol =
+                newPositionForSymbol < 0 ? binaryValue.length + newPositionForSymbol : newPositionForSymbol;
+            binaryValue[newPositionForSymbol] = binaryValueCopy[i];
         }
-        newBinaryValue[0] = lastSymbol;
-        return new String(newBinaryValue);
+        return Integer.parseInt(new String(binaryValue), 2);
     }
 
     private static void checkValues(int value, int shift) {

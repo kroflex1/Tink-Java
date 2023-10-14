@@ -2,35 +2,27 @@ package edu.hw1;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import java.util.HashMap;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Task6Test {
-    @Test
+    @ParameterizedTest
+    @CsvSource(value = {"3524:3", "6621:5", "6554:4", "1234:3", "1100:4", "7641:1"}, delimiter = ':')
     @DisplayName("Корректный подсчёт количества шагов")
-    void countAmountOfSteps() {
-        Map<Integer, Integer> answers = new HashMap<>();
-        answers.put(3524, 3);
-        answers.put(6621, 5);
-        answers.put(6554, 4);
-        answers.put(1234, 3);
-        answers.put(1100, 4);
-        answers.put(7641, 1);
-        for (Map.Entry<Integer, Integer> pair : answers.entrySet()) {
-            int steps = Task6.findAmountOfStepsToReachKapekarValue(pair.getKey());
-            assertEquals(pair.getValue().intValue(), steps);
-        }
+    void countAmountOfSteps(int value, int steps) {
+        assertEquals(steps, Task6.findAmountOfStepsToReachKapekarValue(value));
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(ints = {999, -1000, 2222, 1111, 1})
     @DisplayName("Некорректный формат числа")
-    void invalidValueFormat() {
-        int[] answers = new int[] {999, -1000, 2222, 1111, 1};
-        for (int value : answers) {
-            assertThrows(IllegalArgumentException.class, () ->
-                Task6.findAmountOfStepsToReachKapekarValue(value));
-        }
+    void invalidValueFormat(int value) {
+        assertThrows(IllegalArgumentException.class, () ->
+            Task6.findAmountOfStepsToReachKapekarValue(value));
     }
 }

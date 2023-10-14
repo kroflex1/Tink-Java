@@ -1,7 +1,5 @@
 package edu.hw1;
 
-import java.util.Arrays;
-
 public class Task1 {
     private static final int SECONDS_PER_MINUTE = 60;
 
@@ -10,11 +8,22 @@ public class Task1 {
     }
 
     public static int minutesToSeconds(String time) {
-        if (!isCorrectTimeFormat(time)) {
+        String[] timeParts = time.split(":");
+        if (timeParts.length != 2 || isMinusAndPlusInTime(time)) {
             return -1;
         }
-        int[] timeParts = Arrays.stream(time.split(":")).mapToInt(Integer::parseInt).toArray();
-        return timeParts[0] * SECONDS_PER_MINUTE + timeParts[1];
+        int seconds;
+        int minutes;
+        try {
+            seconds = Integer.parseInt(timeParts[1]);
+            minutes = Integer.parseInt(timeParts[0]);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+        if (seconds >= SECONDS_PER_MINUTE) {
+            return -1;
+        }
+        return minutes * SECONDS_PER_MINUTE + seconds;
     }
 
     private static boolean isMinusAndPlusInTime(String time) {
@@ -25,25 +34,4 @@ public class Task1 {
         }
         return false;
     }
-
-    private static boolean isCorrectTimeFormat(String time) {
-        String[] timeParts = time.split(":");
-        if (timeParts.length != 2) {
-            return false;
-        }
-        for (String timePart : timeParts) {
-            if (isMinusAndPlusInTime(timePart)) {
-                return false;
-            }
-            try {
-                Integer.parseInt(timePart);
-            } catch (NumberFormatException e) {
-                return false;
-            }
-        }
-        int seconds = Integer.parseInt(timeParts[1]);
-        int minutes = Integer.parseInt(timeParts[0]);
-        return seconds >= 0 && seconds < SECONDS_PER_MINUTE && minutes >= 0;
-    }
-
 }
