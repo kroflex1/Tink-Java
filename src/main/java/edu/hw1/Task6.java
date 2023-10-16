@@ -6,7 +6,8 @@ import java.util.List;
 
 public class Task6 {
     private static final int CONSTANT_KARPEKAR = 6174;
-    private static final int MIN_VALUE_LENGTH = 4;
+    private static final int VALUE_LENGTH = 4;
+    private static final int MIN_VALUE = 1001;
     private static final int NUMBER_SYSTEM = 10;
 
     public static int findAmountOfStepsToReachKarpekarValue(int value) {
@@ -30,9 +31,9 @@ public class Task6 {
     }
 
     private static void checkValue(List<Integer> sortedDigits) {
-        if (sortedDigits.size() < MIN_VALUE_LENGTH) {
+        if (sortedDigits.size() < VALUE_LENGTH || sortedDigits.size() > VALUE_LENGTH) {
             throw new IllegalArgumentException(String.format(
-                "The number length must be greater than %d", MIN_VALUE_LENGTH));
+                "The length of the number must be equal to%d and be greater than %d", VALUE_LENGTH, MIN_VALUE));
         }
         if (sortedDigits.get(0).equals(sortedDigits.get(sortedDigits.size() - 1))) {
             throw new IllegalArgumentException("All the numbers don't have to be the same");

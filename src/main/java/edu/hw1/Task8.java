@@ -9,17 +9,9 @@ public class Task8 {
         String.format("The table should be %dx%d in size", AMOUNT_OF_ROWS, AMOUNT_OF_COLUMNS);
 
     public static boolean knightBoardCapture(int[][] table) {
-        if (table.length != AMOUNT_OF_ROWS) {
-            throw new IllegalArgumentException(ERROR_SIZE_MESSAGE);
-        }
+        checkTable(table);
         for (int row = 0; row < table.length; ++row) {
             for (int column = 0; column < table[0].length; ++column) {
-                if (table[column].length != AMOUNT_OF_COLUMNS) {
-                    throw new IllegalArgumentException(ERROR_SIZE_MESSAGE);
-                }
-                if (table[row][column] != 0 && table[row][column] != 1) {
-                    throw new IllegalArgumentException("The numbers on the table must be equal to zero or one");
-                }
                 if (table[row][column] == 1) {
                     if (isHorseColliding(table, row, column)) {
                         return false;
@@ -47,6 +39,23 @@ public class Task8 {
             }
         }
         return false;
+    }
+
+    private static void checkTable(int[][] table) {
+        if (table.length != AMOUNT_OF_ROWS) {
+            throw new IllegalArgumentException(ERROR_SIZE_MESSAGE);
+        }
+        for (int row = 0; row < AMOUNT_OF_ROWS; ++row) {
+            if (table[row].length != AMOUNT_OF_COLUMNS) {
+                throw new IllegalArgumentException(ERROR_SIZE_MESSAGE);
+            }
+            for (int column = 0; column < AMOUNT_OF_COLUMNS; ++column) {
+                if (table[row][column] != 1 && table[row][column] != 0) {
+                    throw new IllegalArgumentException("The numbers on the table must be equal to zero or one");
+                }
+            }
+
+        }
     }
 
     private Task8() {

@@ -16,7 +16,7 @@ public class Task6Test {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {999, -1000, 2222, 1111, 1})
+    @ValueSource(ints = {999, -1000, -1001, 2222, 1111, 1, 3524000, 12345})
     @DisplayName("Некорректный формат числа")
     void invalidValueFormat(int value) {
         assertThrows(IllegalArgumentException.class, () ->

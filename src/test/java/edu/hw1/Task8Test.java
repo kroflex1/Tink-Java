@@ -106,4 +106,22 @@ public class Task8Test {
             Task8.knightBoardCapture(table));
         assertEquals("The table should be 8x8 in size", exception.getMessage());
     }
+
+    @Test
+    @DisplayName("Некорректный размер стола 3")
+    void invalidTableSize3() {
+        int[][] table = {
+            {1, 0, 1, 0, 1, 0, 1, 0},
+            {0, 1, 1, 1, 0, 1, 0, 1},
+            {0, 0, 0, 0, 1, 0, 1, 0},
+            {0, 0, 1, 0, 0, 1, 0, 1},
+            {1, 0, 0},
+            {0, 0, 0},
+            {1, 0, 0},
+            {0, 0, 0}
+        };
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+            Task8.knightBoardCapture(table));
+        assertEquals("The table should be 8x8 in size", exception.getMessage());
+    }
 }

@@ -4,13 +4,13 @@ package edu.hw1;
 public class Task7 {
 
     public static int rotateRight(int n, int shift) {
-        checkValues(n, shift);
+        checkValues(n);
         return rotate(n, shift);
 
     }
 
     public static int rotateLeft(int n, int shift) {
-        checkValues(n, shift);
+        checkValues(n);
         return rotate(n, -shift);
     }
 
@@ -30,8 +30,8 @@ public class Task7 {
         return Integer.parseInt(new String(binaryValue), 2);
     }
 
-    private static void checkValues(int value, int shift) {
-        if (value < 0 || shift < 0) {
+    private static void checkValues(int value) {
+        if (value < 0) {
             throw new IllegalArgumentException("The number must be greater than or equal to zero");
         }
     }
