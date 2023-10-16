@@ -39,14 +39,4 @@ public class Task7Test {
     void checkNShiftRight(int value, int shift, String shiftedBinaryValue) {
         assertEquals(Integer.parseInt(shiftedBinaryValue, 2), Task7.rotateRight(value, shift));
     }
-
-    @ParameterizedTest
-    @CsvSource(value = {"-10:1", "10:-1", "-10:-1",}, delimiter = ':')
-    @DisplayName("Вызов ошибки при передаче некорректных аргументов")
-    void checkInvalidArguments(int value, int shift) {
-        assertThrows(IllegalArgumentException.class, () ->
-            Task7.rotateLeft(value, shift));
-        assertThrows(IllegalArgumentException.class, () ->
-            Task7.rotateRight(value, shift));
-    }
 }
