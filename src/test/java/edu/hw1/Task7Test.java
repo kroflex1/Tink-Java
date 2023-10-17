@@ -1,13 +1,9 @@
 package edu.hw1;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
-import java.security.KeyPair;
-import java.util.HashMap;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -16,7 +12,7 @@ public class Task7Test {
     @CsvSource(value = {"8:0001", "13:1011", "16:00001", "17:00011", "0:0", "1:1"}, delimiter = ':')
     @DisplayName("Сдвиг влево на 1 цикл")
     void checkOneShiftLeft(int value, String shiftedBinaryValue) {
-        assertEquals(Integer.parseInt(shiftedBinaryValue, 2), Task7.rotateLeft(value, 1));
+        Assertions.assertEquals(Integer.parseInt(shiftedBinaryValue, 2), Task7.rotateLeft(value, 1));
     }
 
     @ParameterizedTest
