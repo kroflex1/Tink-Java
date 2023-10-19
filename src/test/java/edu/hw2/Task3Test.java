@@ -21,13 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Task3Test {
 
-    static Arguments[] connectionManagers() {
-        return new Arguments[] {
-            Arguments.of(new DefaultConnectionManager()),
-            Arguments.of(new FaultyConnectionManager())
-        };
-    }
-
     private static int calculateProbableNumberOfOccurrencesInTrials(
         double probability,
         int trials
