@@ -17,7 +17,6 @@ public class WordGenerator {
 
     public WordGenerator() {
         words = new HashMap<>();
-        fillTopicsWithWords();
         randomizer = new Random();
     }
 
@@ -38,11 +37,13 @@ public class WordGenerator {
         throw new IllegalStateException("Something went wrong while picking a random word");
     }
 
-    public void addNewWordToTopic(String word, Topic topic) {
-        if (!words.containsKey(topic)) {
-            words.put(topic, new HashSet<>());
-        }
-        words.get(topic).add(word);
+    public void fillTopicsWithStartWords() {
+        Set<String> sportWords = new HashSet<>(Arrays.asList("football", "basketball", "hockey"));
+        Set<String> animalWords = new HashSet<>(Arrays.asList("lion", "wolf", "rabbit"));
+        Set<String> foodWords = new HashSet<>(Arrays.asList("apple", "cake", "carrot"));
+        addWordsToTopic(sportWords, Topic.Sport);
+        addWordsToTopic(animalWords, Topic.Animals);
+        addWordsToTopic(foodWords, Topic.Food);
     }
 
     public void addWordsToTopic(Set<String> newWords, Topic topic) {
@@ -54,14 +55,5 @@ public class WordGenerator {
 
     public Set<Topic> getAvailableTopics() {
         return words.keySet();
-    }
-
-    private void fillTopicsWithWords() {
-        Set<String> sportWords = new HashSet<>(Arrays.asList("football", "basketball", "hockey"));
-        Set<String> animalWords = new HashSet<>(Arrays.asList("lion", "wolf", "rabbit"));
-        Set<String> foodWords = new HashSet<>(Arrays.asList("apple", "cake", "carrot"));
-        addWordsToTopic(sportWords, Topic.Sport);
-        addWordsToTopic(animalWords, Topic.Animals);
-        addWordsToTopic(foodWords, Topic.Food);
     }
 }

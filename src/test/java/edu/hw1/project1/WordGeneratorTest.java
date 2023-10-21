@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class WordGeneratorTest {
 
-    static Arguments[] availableTopics() {
+    static Arguments[] topics() {
         return new Arguments[] {
             Arguments.of(Topic.Food),
             Arguments.of(Topic.Animals),
@@ -25,7 +25,25 @@ public class WordGeneratorTest {
     }
 
     @Test
-    @DisplayName("WordGenerator не может вернуть слово по заданной тематике")
+    @DisplayName("WordGenerator не имеет слов при инициализации")
+    void wordGeneratorIsEmpty() {
+        WordGenerator wordGenerator = new WordGenerator();
+        assertEquals(0, wordGenerator.getAvailableTopics().size());
+    }
+
+    @Test
+    @DisplayName("В WordGenerator можно добавить 3 стартовые тематики")
+    void wordGeneratorHaveThreeStartTopic() {
+        WordGenerator wordGenerator = new WordGenerator();
+        wordGenerator.fillTopicsWithStartWords();
+        assertEquals(
+            new HashSet<Topic>(Arrays.asList(Topic.Sport, Topic.Food, Topic.Animals)),
+            wordGenerator.getAvailableTopics()
+        );
+    }
+
+    @Test
+    @DisplayName("WordGenerator не может вернуть слово по тематике, которое отсутствует в нём")
     void wordGeneratorCantReturnRandomWord() {
         Topic notAvailableTopic = Topic.Country;
         WordGenerator wordGenerator = new WordGenerator();
@@ -35,34 +53,23 @@ public class WordGeneratorTest {
     }
 
     @ParameterizedTest
-    @MethodSource("availableTopics")
+    @MethodSource("topics")
     @DisplayName("WordGenerator возвращает случайное слово")
     void wordGeneratorReturnRandomWord(Topic topic) {
         WordGenerator wordGenerator = new WordGenerator();
+        wordGenerator.fillTopicsWithStartWords();
         assertNotNull(wordGenerator.getRandomWordFromTopic(topic));
     }
 
-
-
     @Test
-    @DisplayName("Добавление нового слова в WordGenerator")
+    @DisplayName("Добавление новой тематики и слов в WordGenerator")
     void addNewWordsToWordGenerator() {
         Topic newTopic = Topic.Country;
         Set<String> newWords = new HashSet<>(Arrays.asList("Russia", "USA", "India"));
         WordGenerator wordGenerator = new WordGenerator();
-        assertFalse(wordGenerator.getAvailableTopics().contains(newTopic));
         wordGenerator.addWordsToTopic(newWords, newTopic);
-        assertNotNull(wordGenerator.getRandomWordFromTopic(newTopic));
-    }
-
-    @Test
-    @DisplayName("Добавление новой тематики в WordGenerator")
-    void addNewWordToWordGenerator() {
-        String newWord = "Russia";
-        Topic newTopic = Topic.Country;
-        WordGenerator wordGenerator = new WordGenerator();
-        assertFalse(wordGenerator.getAvailableTopics().contains(newTopic));
-        wordGenerator.addNewWordToTopic(newWord, newTopic);
-        assertEquals(newWord, wordGenerator.getRandomWordFromTopic(newTopic));
+        assertEquals(1, wordGenerator.getAvailableTopics().size());
+        String randomCountry = wordGenerator.getRandomWordFromTopic(newTopic);
+        assertTrue(newWords.contains(randomCountry));
     }
 }
