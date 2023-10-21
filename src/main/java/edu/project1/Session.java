@@ -1,19 +1,20 @@
 package edu.project1;
 
-import edu.project1.GuessResult.Defeat;
-import edu.project1.GuessResult.FailedGuess;
-import edu.project1.GuessResult.GuessResult;
-import edu.project1.GuessResult.InvalidFormatResult;
-import edu.project1.GuessResult.SuccessfulGuess;
-import edu.project1.GuessResult.Win;
-import edu.project1.Word.Topic;
-import edu.project1.Word.WordGenerator;
+import edu.project1.Results.Result;
+import edu.project1.Results.CurrentState;
+import edu.project1.Results.Defeat;
+import edu.project1.Results.FailedGuess;
+import edu.project1.Results.InvalidFormatResult;
+import edu.project1.Results.SuccessfulGuess;
+import edu.project1.Results.Win;
+import edu.project1.WordGenerator.Topic;
+import edu.project1.WordGenerator.WordGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Session {
@@ -25,8 +26,8 @@ public class Session {
     private int attempt = 0;
     private boolean isGameOver = false;
 
-    public Session(Topic selectedTopic) {
-        String word = WordGenerator.getRandomWordFromTopic(selectedTopic);
+    public Session(Topic selectedTopic, WordGenerator wordGenerator) {
+        String word = wordGenerator.getRandomWordFromTopic(selectedTopic).toLowerCase();
         hiddenWordInformation = convertWordToInformation(word);
         hiddenWord = word.toCharArray();
 
@@ -36,19 +37,20 @@ public class Session {
     }
 
     @NotNull
-    public GuessResult guess(char guess) {
+    public Result guess(char guess) {
         if (isGameOver) {
-            return giveUp();
+            return getCurrentStateOfGame();
         }
-        GuessResult invalidFormatGuess = checkLetter(guess);
+        guess = Character.toLowerCase(guess);
+        Result invalidFormatGuess = checkLetter(guess);
         if (invalidFormatGuess != null) {
             return invalidFormatGuess;
         }
-        if (isHiddenWordContainLetter(guess)) {
-            openNewLetterInUserAnswer(guess);
+        if (tryOpenNewLetterInUserAnswer(guess)) {
             if (Arrays.equals(hiddenWord, userAnswer)) {
                 isGameOver = true;
-                return new Win(userAnswer, attempt, maxAttempts, "You won!");
+                String winMessage = String.format("You WON! Hidden word was '%s'", new String(hiddenWord));
+                return new Win(userAnswer, attempt, maxAttempts, winMessage);
             }
             return new SuccessfulGuess(userAnswer, attempt, maxAttempts, "Hit!");
         }
@@ -61,21 +63,30 @@ public class Session {
     }
 
     @NotNull
-    public GuessResult giveUp() {
+    public Result giveUp() {
         isGameOver = true;
-        String defeatMessage = String.format("You lost! The hidden word was %s", new String(hiddenWord));
+        String defeatMessage = String.format("You LOST! The hidden word was '%s'", new String(hiddenWord));
         return new Defeat(userAnswer, attempt, maxAttempts, defeatMessage);
     }
 
-    private boolean isHiddenWordContainLetter(char letter) {
-        return hiddenWordInformation.containsKey(letter);
+    @NotNull
+    public CurrentState getCurrentStateOfGame() {
+        return new CurrentState(userAnswer, attempt, maxAttempts, "Current game state", isGameOver);
     }
 
-    private void openNewLetterInUserAnswer(char letter) {
-        userAnswerInformation.put(letter, hiddenWordInformation.get(letter));
-        for (int indexOfNewLetter : userAnswerInformation.get(letter)) {
-            userAnswer[indexOfNewLetter] = letter;
+    public int getMaxAttempts() {
+        return maxAttempts;
+    }
+
+    private boolean tryOpenNewLetterInUserAnswer(char letter) {
+        if (hiddenWordInformation.containsKey(letter)) {
+            userAnswerInformation.put(letter, hiddenWordInformation.get(letter));
+            for (int indexOfNewLetter : userAnswerInformation.get(letter)) {
+                userAnswer[indexOfNewLetter] = letter;
+            }
+            return true;
         }
+        return false;
     }
 
     @Nullable
@@ -83,7 +94,7 @@ public class Session {
         if (userAnswerInformation.containsKey(letter)) {
             return new InvalidFormatResult(userAnswer, attempt, maxAttempts, "You have already guessed this letter");
         }
-        if (!Character.isLetter(letter) || !((letter >= 'a' && letter <= 'z') || (letter >= 'A' && letter <= 'Z'))) {
+        if (!Character.isLetter(letter) || !((letter >= 'a' && letter <= 'z'))) {
             return new InvalidFormatResult(userAnswer, attempt, maxAttempts, "Invalid letter format");
         }
         return null;
