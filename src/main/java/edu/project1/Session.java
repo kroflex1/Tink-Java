@@ -1,21 +1,21 @@
 package edu.project1;
 
-import edu.project1.Results.Result;
 import edu.project1.Results.CurrentState;
 import edu.project1.Results.Defeat;
 import edu.project1.Results.FailedGuess;
 import edu.project1.Results.InvalidFormatResult;
+import edu.project1.Results.Result;
 import edu.project1.Results.SuccessfulGuess;
 import edu.project1.Results.Win;
 import edu.project1.WordGenerator.Topic;
 import edu.project1.WordGenerator.WordGenerator;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Session {
     private final Map<Character, List<Integer>> hiddenWordInformation;
@@ -36,17 +36,18 @@ public class Session {
         userAnswerInformation = new HashMap<>();
     }
 
+    @SuppressWarnings("ReturnCount")
     @NotNull
     public Result guess(char guess) {
         if (isGameOver) {
             return getCurrentStateOfGame();
         }
-        guess = Character.toLowerCase(guess);
-        Result invalidFormatGuess = checkLetter(guess);
+        char lowerLetter = Character.toLowerCase(guess);
+        Result invalidFormatGuess = checkLetter(lowerLetter);
         if (invalidFormatGuess != null) {
             return invalidFormatGuess;
         }
-        if (tryOpenNewLetterInUserAnswer(guess)) {
+        if (tryOpenNewLetterInUserAnswer(lowerLetter)) {
             if (Arrays.equals(hiddenWord, userAnswer)) {
                 isGameOver = true;
                 String winMessage = String.format("You WON! Hidden word was '%s'", new String(hiddenWord));

@@ -1,11 +1,10 @@
-package edu.hw1.project1;
+package edu.project1;
 
 import edu.project1.Results.CurrentState;
 import edu.project1.Results.FailedGuess;
 import edu.project1.Results.InvalidFormatResult;
 import edu.project1.Results.Result;
 import edu.project1.Results.Win;
-import edu.project1.Session;
 import edu.project1.WordGenerator.HangmanWordGenerator;
 import edu.project1.WordGenerator.Topic;
 import org.junit.jupiter.api.DisplayName;

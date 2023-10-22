@@ -4,5 +4,5 @@ import org.jetbrains.annotations.NotNull;
 
 public interface WordGenerator {
     @NotNull
-    public String getRandomWordFromTopic(Topic topic);
+    String getRandomWordFromTopic(Topic topic);
 }
