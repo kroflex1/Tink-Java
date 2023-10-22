@@ -6,7 +6,7 @@ import edu.hw2.Task3.Connections.StableConnection;
 
 public class DefaultConnectionManager implements ConnectionManager {
 
-    public static final double PROBABILITY_OF_CREATING_FAULTY_CONNECTION = 0.6;
+    public static final double PROBABILITY_OF_CREATING_FAULTY_CONNECTION = 0.4;
 
     @Override
     public Connection getConnection() {

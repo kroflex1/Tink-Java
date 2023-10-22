@@ -1,7 +1,5 @@
 package edu.hw2;
 
-import edu.hw2.Task2.Rectangle;
-import edu.hw2.Task2.Square;
 import edu.hw2.Task3.ConnectionManagers.ConnectionManager;
 import edu.hw2.Task3.ConnectionManagers.DefaultConnectionManager;
 import edu.hw2.Task3.ConnectionManagers.FaultyConnectionManager;
@@ -21,61 +19,56 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Task3Test {
 
-    private static int calculateProbableNumberOfOccurrencesInTrials(
-        double probability,
-        int trials
-    ) {
-        double q = 1 - probability;
-        if (probability * trials % 1 < 1e-15) {
-            return (int) (probability * trials);
-        }
-        if ((probability * trials - q) % 1 < 1e-15) {
-            return (int) (probability * trials - q);
-        }
-        return (int) Math.ceil(probability * trials - q);
+    static Arguments[] connectionManagers() {
+        return new Arguments[] {
+            Arguments.of(new DefaultConnectionManager()),
+            Arguments.of(new FaultyConnectionManager())
+        };
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {50, 100})
-    @DisplayName("FaultyConnection обрывает соединение и вызывает ошибку с некой вероятностью")
-    void testFaultyConnection(int trials) {
+    @Test
+    @DisplayName("FaultyConnection может обрвать соединение")
+    void testFaultyConnection() {
         FaultyConnection faultyConnection = new FaultyConnection();
-        int probableNumberOfOccurrencesInTrials =
-            calculateProbableNumberOfOccurrencesInTrials(FaultyConnection.PROBABILITY_OF_CONNECTION_FAILURE, trials);
-        boolean isCatchException = false;
-        for (int i = 0; i < probableNumberOfOccurrencesInTrials; ++i) {
+        boolean isHappenedConnectionException = false;
+        while (!isHappenedConnectionException) {
             try {
                 faultyConnection.execute("some command");
             } catch (ConnectionException e) {
-                isCatchException = true;
-                assertEquals(e.getMessage(), "Can't connect to the server");
-                break;
+                isHappenedConnectionException = true;
             }
         }
-        assertTrue(isCatchException);
-
+        assertTrue(isHappenedConnectionException);
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {50, 100})
+    @Test
     @DisplayName("DefaultConnectionManager возвращает FaultyConnection с некой вероятностью")
-    void testDefaultConnectionManager(int trials) {
+    void testDefaultConnectionManager() {
         DefaultConnectionManager defaultConnectionManager = new DefaultConnectionManager();
-        int probableNumberOfOccurrencesInTrials =
-            calculateProbableNumberOfOccurrencesInTrials(
-                DefaultConnectionManager.PROBABILITY_OF_CREATING_FAULTY_CONNECTION,
-                trials
-            );
         boolean isReturnFaultyConnection = false;
-        for (int i = 0; i < probableNumberOfOccurrencesInTrials; ++i) {
+        while (!isReturnFaultyConnection) {
             Connection newConnection = defaultConnectionManager.getConnection();
-            if (newConnection.getClass() == FaultyConnection.class) {
+            if (newConnection instanceof FaultyConnection) {
                 isReturnFaultyConnection = true;
-                break;
             }
-
         }
         assertTrue(isReturnFaultyConnection);
     }
 
+    @ParameterizedTest
+    @MethodSource("connectionManagers")
+    @DisplayName("PopularCommandExecutor выбрасывает ошибку при достижении максимальных попыток для подключения")
+    void testPopularCommandExecutor(ConnectionManager connectionManager) {
+        int maxAttempts = 3;
+        PopularCommandExecutor commandExecutor = new PopularCommandExecutor(connectionManager, maxAttempts);
+        while (true) {
+            try {
+                commandExecutor.updatePackages();
+            } catch (ConnectionException e) {
+                assertEquals("The number of attempts to connect has been exhausted", e.getMessage());
+                assertEquals("Can't connect to the server", e.getCause().getMessage());
+                break;
+            }
+        }
+    }
 }

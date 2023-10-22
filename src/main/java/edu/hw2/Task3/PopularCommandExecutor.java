@@ -19,14 +19,18 @@ public final class PopularCommandExecutor {
 
     void tryExecute(String command) throws ConnectionException {
         for (int i = 1; i <= maxAttempts; ++i) {
+            boolean isCatchException = false;
             try (Connection currentConnection = manager.getConnection();) {
                 currentConnection.execute(command);
             } catch (Exception e) {
+                isCatchException = true;
                 if (i == maxAttempts) {
                     throw new ConnectionException("The number of attempts to connect has been exhausted", e);
                 }
             }
-            break;
+            if (!isCatchException) {
+                break;
+            }
         }
     }
 }
