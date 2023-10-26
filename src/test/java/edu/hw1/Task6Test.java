@@ -1,5 +1,6 @@
 package edu.hw1;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -12,7 +13,7 @@ public class Task6Test {
     @CsvSource(value = {"3524:3", "6621:5", "6554:4", "1234:3", "1100:4", "7641:1"}, delimiter = ':')
     @DisplayName("Корректный подсчёт количества шагов")
     void countAmountOfSteps(int value, int steps) {
-        assertEquals(steps, Task6.findAmountOfStepsToReachKarpekarValue(value));
+        Assertions.assertEquals(steps, Task6.findAmountOfStepsToReachKarpekarValue(value));
     }
 
     @ParameterizedTest

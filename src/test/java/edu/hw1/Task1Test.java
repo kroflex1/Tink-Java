@@ -1,12 +1,10 @@
 package edu.hw1;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import java.util.HashMap;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Task1Test {
@@ -22,7 +20,7 @@ public class Task1Test {
     }, ignoreLeadingAndTrailingWhitespace = true)
     @DisplayName("Перевод корректного формата времени в секунды")
     void convertCorrectTimeToSeconds(String time, int seconds) {
-        assertEquals(seconds, Task1.minutesToSeconds(time));
+        Assertions.assertEquals(seconds, Task1.minutesToSeconds(time));
     }
 
     @ParameterizedTest

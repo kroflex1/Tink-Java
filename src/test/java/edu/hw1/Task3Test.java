@@ -1,5 +1,6 @@
 package edu.hw1;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,7 +17,7 @@ public class Task3Test {
             () -> {
                 int[] firstArray = new int[] {1, 2, 3, 4};
                 int[] secondArray = new int[] {0, 6};
-                assertTrue(Task3.isNestable(firstArray, secondArray));
+                Assertions.assertTrue(Task3.isNestable(firstArray, secondArray));
             },
             () -> {
                 int[] firstArray = new int[] {3, 1};

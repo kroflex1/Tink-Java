@@ -1,5 +1,6 @@
 package edu.hw1;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -21,7 +22,7 @@ public class Task8Test {
             {0, 1, 0, 0, 0, 0, 0, 1},
             {0, 0, 0, 0, 1, 0, 0, 0}
         };
-        assertTrue(Task8.knightBoardCapture(table));
+        Assertions.assertTrue(Task8.knightBoardCapture(table));
     }
 
     @Test

@@ -1,12 +1,9 @@
 package edu.hw1;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import java.util.HashMap;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -17,7 +14,7 @@ public class Task5Test {
     @ValueSource(ints = {11211230, 13001120, 23336014, 9182, 11})
     @DisplayName("Палиндром присутствует")
     void findPalindrome(int value) {
-        assertTrue(Task5.isPalindromeDescendant(value));
+        Assertions.assertTrue(Task5.isPalindromeDescendant(value));
     }
 
     @ParameterizedTest
