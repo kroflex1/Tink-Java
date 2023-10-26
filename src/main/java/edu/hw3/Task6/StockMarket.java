@@ -15,15 +15,15 @@ public class StockMarket {
     }
 
     public void remove(Stock stock) {
-         boolean isRemove =  stackQueue.remove(stock);
-         if(!isRemove){
-             throw new IllegalArgumentException("There is no such element in Stock Market");
-         }
+        boolean isRemove = stackQueue.remove(stock);
+        if (!isRemove) {
+            throw new IllegalArgumentException("There is no such element in Stock Market");
+        }
     }
 
     public Stock mostValuableStock() {
         Stock mostValuableStock = stackQueue.peek();
-        if(mostValuableStock == null){
+        if (mostValuableStock == null) {
             throw new IllegalArgumentException("Stock Market is empty");
         }
         return mostValuableStock;

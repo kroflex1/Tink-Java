@@ -6,7 +6,7 @@ import java.util.List;
 public class ContactParser {
     public static List<Human> parseContacts(List<Human> people, SortingMethod sortingMethod) {
         if (people == null) {
-            return new ArrayList<Human>();
+            return new ArrayList<>();
         }
         List<Human> sortedPeople = new ArrayList<>(people);
         if (sortingMethod.equals(SortingMethod.ASC)) {
@@ -15,5 +15,9 @@ public class ContactParser {
             sortedPeople.sort(new HumanComparator().reversed());
         }
         return sortedPeople;
+    }
+
+    private ContactParser() {
+
     }
 }
