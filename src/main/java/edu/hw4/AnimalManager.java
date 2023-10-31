@@ -1,10 +1,13 @@
 package edu.hw4;
 
+import edu.hw4.Checkers.AnimalChecker;
+import edu.hw4.Checkers.ValidationError;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AnimalManager {
@@ -27,18 +30,7 @@ public class AnimalManager {
 
     //Task4
     public static Animal getAnimalWithLongestName(List<Animal> animals) {
-//        Optional<Integer> var = list.stream()
-//            .max(Comparator.reverseOrder());
-//
-//        // If a value is present, isPresent()
-//        // will return true, else display message
-//        if (var.isPresent()) {
-//            System.out.println(var.get());
-//        }
-//        else {
-//            System.out.println("-1");
-//        }
-        return animals.stream().max(Comparator.comparing(Animal::height)).orElseThrow(NoSuchElementException::new);
+        return animals.stream().max(Comparator.comparing(Animal::height)).orElseThrow(IllegalStateException::new);
     }
 
     //Task5
@@ -101,7 +93,73 @@ public class AnimalManager {
 
     //Task14
     public static Boolean isDogInListWithHeightMoreThanCertainCm(List<Animal> animals, int dogHeight) {
-        return animals.stream().anyMatch(animal -> animal.type() == Animal.Type.DOG && animal.height() >=dogHeight);
+        return animals.stream().anyMatch(animal -> animal.type() == Animal.Type.DOG && animal.height() >= dogHeight);
     }
 
+    //Task15
+    public static Integer getTotalWeightOfAnimalsFromRangeOfAges(List<Animal> animals, int startAge, int endAge)
+        throws IllegalArgumentException {
+        if (endAge < startAge) {
+            throw new IllegalArgumentException("endAge must be more startAge");
+        }
+        return animals.stream().filter(animal -> animal.age() >= startAge && animal.age() <= endAge)
+            .mapToInt(Animal::age).sum();
+    }
+
+    //Task16
+    public static List<Animal> sortByTypeThenBySexThenByName(List<Animal> animals) {
+        return animals.stream()
+            .sorted(Comparator.comparing(Animal::type)
+                .thenComparing(Animal::sex)
+                .thenComparing(Animal::name)).collect(Collectors.toList());
+    }
+
+    //Task17
+    public static Boolean isSpidersBiteMoreOftenThanDogs(List<Animal> animals) {
+        var res = animals.stream()
+            .filter(animal -> animal.type() == Animal.Type.SPIDER || animal.type() == Animal.Type.DOG)
+            .collect(Collectors.groupingBy(Animal::type));
+        int numberOfDogs;
+        int numberOfSpiders;
+        try {
+            numberOfDogs = res.get(Animal.Type.DOG).size();
+            numberOfSpiders = res.get(Animal.Type.SPIDER).size();
+        } catch (NullPointerException e) {
+            return false;
+        }
+        return numberOfSpiders > numberOfDogs;
+    }
+
+    //Task18
+    public static Animal getMostHeavyFish(List<Animal>... animalLists) throws IllegalArgumentException {
+        return Arrays.stream(animalLists).flatMap(List::stream).filter(animal -> animal.type() == Animal.Type.FISH)
+            .max(Comparator.comparingInt(Animal::weight)).orElseThrow();
+    }
+
+    //Task19
+    public static Map<Animal, Set<ValidationError>> getAnimalsThatContainError(List<Animal> animals) {
+        Map<Animal, Optional<Set<ValidationError>>> namesErrors = animals.stream().
+            collect(Collectors.toMap(animal -> animal, AnimalChecker::checkAnimal));
+        return namesErrors.entrySet().stream()
+            .filter(pair -> pair.getValue().isPresent())
+            .collect(Collectors.toMap(Map.Entry::getKey, pair -> pair.getValue().get()));
+    }
+
+    //Task20
+    public static Map<Animal, String> getAnimalsErrorsDescription(List<Animal> animals) {
+        return getAnimalsThatContainError(animals).entrySet().stream()
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                pair -> convertErrorsIntoReadableInformation(pair.getKey().name(), pair.getValue())
+            ));
+    }
+
+    private static String convertErrorsIntoReadableInformation(String animalName, Set<ValidationError> errors) {
+        StringBuilder result = new StringBuilder();
+        result.append(animalName);
+        for (ValidationError currentError : errors) {
+            result.append('\t').append(currentError.getMessage()).append('\n');
+        }
+        return result.toString();
+    }
 }
