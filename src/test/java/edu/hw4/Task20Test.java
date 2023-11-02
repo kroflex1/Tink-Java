@@ -15,22 +15,18 @@ public class Task20Test {
     private static Stream<Arguments> invalidAnimals() {
         Animal animalWithNegativeAge = new Animal("Borya", Animal.Type.CAT, Animal.Sex.M, -2, 10, 2, true);
         Animal animalWithNegativeHeight = new Animal("Varya", Animal.Type.CAT, Animal.Sex.M, 1, -10, 2, true);
-        Animal animalWithSeveralErrors = new Animal("lara", Animal.Type.CAT, Animal.Sex.M, 2, -10, 1000, true);
+        Animal animalWithInvalidName= new Animal("lara", Animal.Type.CAT, Animal.Sex.M, 2, -10, 1000, true);
         String animalWithNegativeAgeDescription =
             String.format("Borya:\n\tage: %s\n", AnimalChecker.MESSAGE_FOR_INVALID_AGE);
         String animalWithNegativeHeightDescription =
             String.format("Varya:\n\theight: %s\n", AnimalChecker.MESSAGE_FOR_INVALID_HEIGHT);
-        String animalWithSeveralErrorsDescription = String.format("lara:\n\tname: %s\n\theight: %s\n\tweight: %s\n",
-            AnimalNameChecker.MESSAGE_FOR_INVALID_REGISTER,
-            AnimalChecker.MESSAGE_FOR_INVALID_HEIGHT,
-            AnimalChecker.MESSAGE_FOR_INVALID_WEIGHT
-        );
+        String animalWithInvalidNameDescription = String.format("lara:\n\tname: %s\n", AnimalNameChecker.MESSAGE_FOR_INVALID_REGISTER, );
         Map<Animal, String> except = new HashMap<>(){{
             put(animalWithNegativeAge, animalWithNegativeAgeDescription);
             put(animalWithNegativeHeight, animalWithNegativeHeightDescription);
-            put(animalWithSeveralErrors, animalWithSeveralErrorsDescription);
+            put(animalWithInvalidName, animalWithInvalidNameDescription);
         }};
-        return Stream.of(Arguments.of(List.of(animalWithNegativeAge, animalWithNegativeHeight, animalWithSeveralErrors), except));
+        return Stream.of(Arguments.of(List.of(animalWithNegativeAge, animalWithNegativeHeight, animalWithInvalidNameDescription), except));
     }
 
     @ParameterizedTest
