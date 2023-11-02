@@ -9,14 +9,14 @@ public class AnimalChecker {
     private static final int MIN_AGE = 0;
     private static final int MAX_AGE = 200;
     private static final int MIN_HEIGHT = 1;
-    private static final int MAX_HEIGHT = 500;
+    private static final int MAX_HEIGHT = 200;
     private static final int MIN_WEIGHT = 1;
-    private static final int MAX_WEIGHT = 50;
-    private static final String MESSAGE_FOR_INVALID_AGE =
+    private static final int MAX_WEIGHT = 200;
+    public static final String MESSAGE_FOR_INVALID_AGE =
         String.format("Age must be greater than %d and less than %d", MIN_AGE, MAX_AGE);
-    private static final String MESSAGE_FOR_INVALID_HEIGHT =
+    public static final String MESSAGE_FOR_INVALID_HEIGHT =
         String.format("Height must be greater than %d and less than %d", MIN_HEIGHT, MAX_HEIGHT);
-    private static final String MESSAGE_FOR_INVALID_WEIGHT =
+    public static final String MESSAGE_FOR_INVALID_WEIGHT =
         String.format("Weight must be greater than %d and less than %d", MIN_WEIGHT, MAX_WEIGHT);
 
     public static Optional<Set<ValidationError>> checkAnimal(Animal animal) {
@@ -36,6 +36,10 @@ public class AnimalChecker {
             return Optional.empty();
         }
         return Optional.of(errors);
+    }
+
+    private AnimalChecker() {
+
     }
 
 }

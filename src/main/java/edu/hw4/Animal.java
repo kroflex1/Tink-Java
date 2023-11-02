@@ -9,6 +9,7 @@ public record Animal(String name, Type type, Sex sex, int age, int height, int w
         M, F
     }
 
+    @SuppressWarnings("MagicNumber")
     public int paws() {
         return switch (type) {
             case CAT, DOG -> 4;

@@ -8,56 +8,72 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class AnimalManager {
     //Task1
     public static List<Animal> getSortedAnimalsByByHeight(List<Animal> animals) {
-        animals.sort(Comparator.comparingInt(Animal::height));
-        return animals;
+        return animals.stream().sorted(Comparator.comparing(Animal::height)).collect(Collectors.toList());
     }
 
     //Task2
-    public static List<Animal> getSortedAnimalsByByWeight(List<Animal> animals) {
-        animals.sort(Comparator.comparingInt(Animal::weight).reversed());
-        return animals;
+    public static List<Animal> getSortedAnimalsByByWeightAngGetFirstN(List<Animal> animals, int n)
+        throws IllegalArgumentException {
+        if (n <= 0) {
+            throw new IllegalArgumentException("N must be greater than 0");
+        }
+        return animals.stream().sorted(Comparator.comparing(Animal::weight).reversed()).limit(n)
+            .collect(Collectors.toList());
     }
 
     //Task3
-    public static Map<Animal.Type, Long> countNumberOfAnimalsOfEachSpecies(List<Animal> animals) {
-        return animals.stream().collect(Collectors.groupingBy(Animal::type, Collectors.counting()));
+    public static Map<Animal.Type, Integer> countNumberOfAnimalsOfEachSpecies(List<Animal> animals) {
+        return animals.stream().collect(Collectors.groupingBy(Animal::type, Collectors.summingInt(a -> 1)));
     }
 
     //Task4
     public static Animal getAnimalWithLongestName(List<Animal> animals) {
-        return animals.stream().max(Comparator.comparing(Animal::height)).orElseThrow(IllegalStateException::new);
+        return animals.stream().max(Comparator.comparing(animal -> animal.name().length()))
+            .orElseThrow(IllegalArgumentException::new);
     }
 
     //Task5
-    public static Animal.Sex whatMoreMalesOrFemales(List<Animal> animals) {
+    public static Animal.Sex whatMoreMalesOrFemales(List<Animal> animals) throws IllegalArgumentException {
+        if (animals.isEmpty()) {
+            throw new IllegalArgumentException("There must be at least 1 item in the list");
+        }
         Map<Animal.Sex, Long> numberOfMalesAndFemales =
             animals.stream().collect(Collectors.groupingBy(Animal::sex, Collectors.counting()));
-        return numberOfMalesAndFemales.get(Animal.Sex.M) >= numberOfMalesAndFemales.get(Animal.Sex.F) ? Animal.Sex.M :
-            Animal.Sex.F;
+        return numberOfMalesAndFemales.get(Animal.Sex.M) >= numberOfMalesAndFemales.get(Animal.Sex.F) ? Animal.Sex.M
+            : Animal.Sex.F;
     }
 
     //Task6
-    public static Map<Animal.Type, Optional<Animal>> getHeaviestAnimalOfEachSpecies(List<Animal> animals) {
+    public static Map<Animal.Type, Animal> getHeaviestAnimalOfEachSpecies(List<Animal> animals) {
         return animals.stream()
-            .collect(Collectors.groupingBy(Animal::type, Collectors.maxBy(Comparator.comparingInt(Animal::weight))));
+            .collect(Collectors.toMap(Animal::type, Function.identity(),
+                BinaryOperator.maxBy(Comparator.comparing(Animal::weight))
+            ));
     }
 
     //Task7
     public static Animal getOldestAnimal(List<Animal> animals, int animalPosition) throws IllegalArgumentException {
-        if (animalPosition < 0 || animalPosition >= animals.size()) {
-            throw new IllegalArgumentException();
+        if (animals.isEmpty()) {
+            throw new IllegalArgumentException("List shouldn`t be empty");
         }
-        animals.sort(Comparator.comparingInt(Animal::age).reversed());
-        return animals.get(animalPosition);
+        if (animalPosition <= 0 || animalPosition > animals.size()) {
+            throw new IllegalArgumentException(String.format(
+                "Position must be greater than 1 and less than %d",
+                animals.size()
+            ));
+        }
+        return animals.stream().sorted(Comparator.comparing(Animal::age).reversed()).toList().get(animalPosition - 1);
     }
 
     //Task8
-    public static Optional<Animal> getHeaviestAnimalAmongAnimalsBelowCertainCm(List<Animal> animals, int animalHeight)
+    public static Optional<Animal> getHeaviestAnimalBelowCertainHeight(List<Animal> animals, int animalHeight)
         throws IllegalArgumentException {
         if (animalHeight < 0) {
             throw new IllegalArgumentException();
@@ -72,12 +88,13 @@ public class AnimalManager {
     }
 
     //Task10
-    public static List<Animal> animalsWhoseAgeDoesNotMatchTheNumberOfPaws(List<Animal> animals) {
+    public static List<Animal> getAnimalsWhoseAgeDoesNotMatchTheNumberOfPaws(List<Animal> animals) {
         return animals.stream().filter(animal -> animal.age() != animal.paws()).collect(Collectors.toList());
     }
 
     //Task11
-    public static List<Animal> animalsThatCanBiteAndWhoseHeightExceeds100cm(List<Animal> animals) {
+    @SuppressWarnings("MagicNumber")
+    public static List<Animal> getAnimalsThatCanBiteAndWhoseHeightExceeds100cm(List<Animal> animals) {
         return animals.stream().filter(animal -> animal.height() >= 100 && animal.bites()).collect(Collectors.toList());
     }
 
@@ -103,11 +120,11 @@ public class AnimalManager {
             throw new IllegalArgumentException("endAge must be more startAge");
         }
         return animals.stream().filter(animal -> animal.age() >= startAge && animal.age() <= endAge)
-            .mapToInt(Animal::age).sum();
+            .mapToInt(Animal::weight).sum();
     }
 
     //Task16
-    public static List<Animal> sortByTypeThenBySexThenByName(List<Animal> animals) {
+    public static List<Animal> getSortedByTypeThenBySexThenByName(List<Animal> animals) {
         return animals.stream()
             .sorted(Comparator.comparing(Animal::type)
                 .thenComparing(Animal::sex)
@@ -117,7 +134,8 @@ public class AnimalManager {
     //Task17
     public static Boolean isSpidersBiteMoreOftenThanDogs(List<Animal> animals) {
         var res = animals.stream()
-            .filter(animal -> animal.type() == Animal.Type.SPIDER || animal.type() == Animal.Type.DOG)
+            .filter(animal -> (animal.type() == Animal.Type.SPIDER || animal.type() == Animal.Type.DOG)
+                && animal.bites())
             .collect(Collectors.groupingBy(Animal::type));
         int numberOfDogs;
         int numberOfSpiders;
@@ -131,15 +149,15 @@ public class AnimalManager {
     }
 
     //Task18
-    public static Animal getMostHeavyFish(List<Animal>... animalLists) throws IllegalArgumentException {
+    public static Optional<Animal> getMostHeavyFish(List<Animal>... animalLists) throws IllegalArgumentException {
         return Arrays.stream(animalLists).flatMap(List::stream).filter(animal -> animal.type() == Animal.Type.FISH)
-            .max(Comparator.comparingInt(Animal::weight)).orElseThrow();
+            .max(Comparator.comparingInt(Animal::weight));
     }
 
     //Task19
     public static Map<Animal, Set<ValidationError>> getAnimalsThatContainError(List<Animal> animals) {
-        Map<Animal, Optional<Set<ValidationError>>> namesErrors = animals.stream().
-            collect(Collectors.toMap(animal -> animal, AnimalChecker::checkAnimal));
+        Map<Animal, Optional<Set<ValidationError>>> namesErrors = animals.stream()
+            .collect(Collectors.toMap(animal -> animal, AnimalChecker::checkAnimal));
         return namesErrors.entrySet().stream()
             .filter(pair -> pair.getValue().isPresent())
             .collect(Collectors.toMap(Map.Entry::getKey, pair -> pair.getValue().get()));
@@ -156,10 +174,14 @@ public class AnimalManager {
 
     private static String convertErrorsIntoReadableInformation(String animalName, Set<ValidationError> errors) {
         StringBuilder result = new StringBuilder();
-        result.append(animalName);
+        result.append(animalName).append(":\n");
         for (ValidationError currentError : errors) {
-            result.append('\t').append(currentError.getMessage()).append('\n');
+            result.append('\t').append(currentError.description()).append('\n');
         }
         return result.toString();
+    }
+
+    private AnimalManager() {
+
     }
 }

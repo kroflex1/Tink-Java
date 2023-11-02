@@ -1,9 +1,8 @@
 package edu.hw4.Checkers;
 
-public class ValidationError extends RuntimeException {
+public record ValidationError(String description, AnimalField field) {
 
     public ValidationError(AnimalField field, String description) {
-        super(String.format("%s: %s", field.toString().toLowerCase(), description));
+        this(String.format("%s: %s", field.toString().toLowerCase(), description), field);
     }
-
 }
