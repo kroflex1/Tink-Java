@@ -9,6 +9,11 @@ public class Maze {
         this.height = height;
         this.width = width;
         this.grid = new CellType[height][width];
+        for (int row = 0; row < height; ++row) {
+            for (int column = 0; column < width; ++column) {
+                setPointType(row, column, CellType.WALL);
+            }
+        }
     }
 
     public void setPointType(Coordinate coordinate, CellType cellType) {

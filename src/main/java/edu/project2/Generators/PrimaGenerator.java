@@ -12,44 +12,41 @@ import java.util.Set;
 
 public class PrimaGenerator implements Generator {
 
-    private Maze maze;
     private Set<Coordinate> anchorPoints;
+    private Maze maze;
 
     @Override
-    public Maze generate(int height, int width) {
-        maze = new Maze(height + 2, width + 2);
+    public Maze generate(int width, int height) {
+        maze = new Maze(height, width);
+        Coordinate startPoint = chooseRandomStartCoordinate(height, width);
         anchorPoints = new HashSet<>();
-        fillMazeWithWalls();
-        fillMazeWithPaths();
-
-        return maze;
-    }
-
-    private void fillMazeWithPaths() {
-        Coordinate startPoint = chooseRandomStartingCoordinate(maze.getHeight(), maze.getWidth());
-        maze.setPointType(startPoint, CellType.PASSAGE);
         anchorPoints.add(startPoint);
 
         while (!anchorPoints.isEmpty()) {
-            startPoint = getRandomPoint(anchorPoints);
-            Coordinate potentialAnchorPoint = getRandomTwoPointAwayAnchorPoint(startPoint);
-            if (potentialAnchorPoint != null) {
-                Coordinate passagePoint = getRandomTwoPointAwayPassagePoint(potentialAnchorPoint);
-                Coordinate toPassagePoint = getMidpointBetweenTwoPoints(potentialAnchorPoint, passagePoint);
-                maze.setPointType(toPassagePoint, CellType.PASSAGE);
-                maze.setPointType(potentialAnchorPoint, CellType.PASSAGE);
-                anchorPoints.add(potentialAnchorPoint);
-            } else {
-                anchorPoints.remove(startPoint);
-            }
+            Coordinate point = getRandomPoint(anchorPoints);
+            anchorPoints.remove(point);
+            maze.setPointType(point, CellType.PASSAGE);
+            tryConnectTwoPassage(point);
+            anchorPoints.addAll(getTwoPointAwayWallPoints(point));
         }
+        encloseMazeWithWall();
+        return maze;
+    }
+
+    private void tryConnectTwoPassage(Coordinate passagePoint) {
+        Coordinate otherPassagePoint = getRandomTwoPointAwayPassagePoint(passagePoint);
+        if (otherPassagePoint == null) {
+            return;
+        }
+        Coordinate midPoint = getMidpointBetweenTwoPoints(passagePoint, otherPassagePoint);
+        maze.setPointType(midPoint, CellType.PASSAGE);
     }
 
     @Nullable
-    private Coordinate getRandomTwoPointAwayAnchorPoint(Coordinate startPoint) {
+    private Coordinate getRandomTwoPointAwayPassagePoint(Coordinate startPoint) {
         List<Coordinate> points = new ArrayList<>();
-        for (Coordinate currentPoint : getPointsThatTwoPointAwayFromCertainPoint(startPoint)) {
-            if (this.maze.getPointType(currentPoint) == CellType.WALL) {
+        for (var currentPoint : getPointsThatTwoPointAwayFromCertainPoint(startPoint)) {
+            if (maze.getPointType(currentPoint) == CellType.PASSAGE) {
                 points.add(currentPoint);
             }
         }
@@ -59,14 +56,14 @@ public class PrimaGenerator implements Generator {
         return points.get(new Random().nextInt(points.size()));
     }
 
-    private Coordinate getRandomTwoPointAwayPassagePoint(Coordinate startPoint) {
+    private List<Coordinate> getTwoPointAwayWallPoints(Coordinate startPoint) {
         List<Coordinate> points = new ArrayList<>();
         for (Coordinate currentPoint : getPointsThatTwoPointAwayFromCertainPoint(startPoint)) {
-            if (this.maze.getPointType(currentPoint) == CellType.PASSAGE) {
+            if (this.maze.getPointType(currentPoint) == CellType.WALL) {
                 points.add(currentPoint);
             }
         }
-        return points.get(new Random().nextInt(points.size()));
+        return points;
     }
 
     private List<Coordinate> getPointsThatTwoPointAwayFromCertainPoint(Coordinate startPoint) {
@@ -83,11 +80,6 @@ public class PrimaGenerator implements Generator {
         return points;
     }
 
-    private boolean isPointWithinBoundary(Coordinate coordinate) {
-        return coordinate.row() >= 1 && coordinate.row() < this.maze.getHeight() - 1 &&
-            coordinate.col() >= 1 && coordinate.col() < this.maze.getWidth() - 1;
-    }
-
     private Coordinate getRandomPoint(Set<Coordinate> points) {
         int item = new Random().nextInt(points.size());
         int i = 0;
@@ -100,20 +92,28 @@ public class PrimaGenerator implements Generator {
         throw new IllegalArgumentException("Set is empty");
     }
 
+    private Coordinate chooseRandomStartCoordinate(int height, int width) {
+        Random random = new Random();
+        return new Coordinate(random.nextInt(height), random.nextInt(width));
+    }
+
     private Coordinate getMidpointBetweenTwoPoints(Coordinate firstPoint, Coordinate secondPoint) {
         return new Coordinate((firstPoint.row() + secondPoint.row()) / 2, (firstPoint.col() + secondPoint.col()) / 2);
     }
 
-    private Coordinate chooseRandomStartingCoordinate(int height, int width) {
-        Random random = new Random();
-        return new Coordinate(random.nextInt(1, height - 1), random.nextInt(1, width - 1));
+    private boolean isPointWithinBoundary(Coordinate coordinate) {
+        return coordinate.row() >= 0 && coordinate.row() < this.maze.getHeight() &&
+            coordinate.col() >= 0 && coordinate.col() < this.maze.getWidth();
     }
 
-    private void fillMazeWithWalls() {
+    private void encloseMazeWithWall() {
         for (int row = 0; row < maze.getHeight(); ++row) {
-            for (int column = 0; column < maze.getWidth(); ++column) {
-                maze.setPointType(row, column, CellType.WALL);
-            }
+            maze.setPointType(row, 0, CellType.WALL);
+            maze.setPointType(row, maze.getWidth() - 1, CellType.WALL);
+        }
+        for (int column = 0; column < maze.getWidth(); ++column) {
+            maze.setPointType(0, column, CellType.WALL);
+            maze.setPointType(maze.getHeight() - 1, column, CellType.WALL);
         }
     }
 }
