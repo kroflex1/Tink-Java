@@ -10,14 +10,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public class PrimaGenerator implements Generator {
-
+public class TestGenerator implements Generator {
     private Set<Coordinate> anchorPoints;
     private Maze maze;
 
     @Override
     public Maze generate(int width, int height) {
         maze = new Maze(height, width);
+        fillMazeWithWalls();
         Coordinate startPoint = chooseRandomStartCoordinate(height, width);
         anchorPoints = new HashSet<>();
         anchorPoints.add(startPoint);
@@ -26,26 +26,26 @@ public class PrimaGenerator implements Generator {
             Coordinate point = getRandomPoint(anchorPoints);
             anchorPoints.remove(point);
             maze.setPointType(point, CellType.PASSAGE);
-            tryConnectTwoPassage(point);
+            connect(maze, point);
             anchorPoints.addAll(getTwoPointAwayWallPoints(point));
         }
         encloseMazeWithWall();
         return maze;
     }
 
-    private void tryConnectTwoPassage(Coordinate passagePoint) {
-        Coordinate otherPassagePoint = getRandomTwoPointAwayPassagePoint(passagePoint);
-        if (otherPassagePoint == null) {
+    private void connect(Maze maze, Coordinate startPoint) {
+        Coordinate passagePoint = getRandomTwoPointAwayPassagePoint(startPoint);
+        if (passagePoint == null) {
             return;
         }
-        Coordinate midPoint = getMidpointBetweenTwoPoints(passagePoint, otherPassagePoint);
+        Coordinate midPoint = getMidpointBetweenTwoPoints(startPoint, passagePoint);
         maze.setPointType(midPoint, CellType.PASSAGE);
     }
 
     @Nullable
     private Coordinate getRandomTwoPointAwayPassagePoint(Coordinate startPoint) {
         List<Coordinate> points = new ArrayList<>();
-        for (var currentPoint : maze.getNeighboringPoints(startPoint)) {
+        for (var currentPoint : getPointsThatTwoPointAwayFromCertainPoint(startPoint)) {
             if (maze.getPointType(currentPoint) == CellType.PASSAGE) {
                 points.add(currentPoint);
             }
@@ -58,9 +58,23 @@ public class PrimaGenerator implements Generator {
 
     private List<Coordinate> getTwoPointAwayWallPoints(Coordinate startPoint) {
         List<Coordinate> points = new ArrayList<>();
-        for (Coordinate currentPoint : maze.getNeighboringPoints(startPoint)) {
+        for (Coordinate currentPoint : getPointsThatTwoPointAwayFromCertainPoint(startPoint)) {
             if (this.maze.getPointType(currentPoint) == CellType.WALL) {
                 points.add(currentPoint);
+            }
+        }
+        return points;
+    }
+
+    private List<Coordinate> getPointsThatTwoPointAwayFromCertainPoint(Coordinate startPoint) {
+        List<Coordinate> points = new ArrayList<>();
+        for (int rowOffset = -2; rowOffset <= 2; rowOffset += 2) {
+            for (int columnOffset = -2; columnOffset <= 2; columnOffset += 2) {
+                Coordinate currentCoordinate =
+                    new Coordinate(startPoint.row() + rowOffset, startPoint.col() + columnOffset);
+                if (Math.abs(rowOffset) != Math.abs(columnOffset) && isPointWithinBoundary(currentCoordinate)) {
+                    points.add(currentCoordinate);
+                }
             }
         }
         return points;
@@ -85,6 +99,19 @@ public class PrimaGenerator implements Generator {
 
     private Coordinate getMidpointBetweenTwoPoints(Coordinate firstPoint, Coordinate secondPoint) {
         return new Coordinate((firstPoint.row() + secondPoint.row()) / 2, (firstPoint.col() + secondPoint.col()) / 2);
+    }
+
+    private boolean isPointWithinBoundary(Coordinate coordinate) {
+        return coordinate.row() >= 0 && coordinate.row() < this.maze.getHeight() &&
+            coordinate.col() >= 0 && coordinate.col() < this.maze.getWidth();
+    }
+
+    private void fillMazeWithWalls() {
+        for (int row = 0; row < maze.getHeight(); ++row) {
+            for (int column = 0; column < maze.getWidth(); ++column) {
+                maze.setPointType(row, column, CellType.WALL);
+            }
+        }
     }
 
     private void encloseMazeWithWall() {

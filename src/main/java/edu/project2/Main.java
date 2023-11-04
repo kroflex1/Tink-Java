@@ -7,7 +7,7 @@ import edu.project2.Renders.SimpleRenderer;
 public class Main {
     public static void main(String[] args) {
         SimpleRenderer renderer = new SimpleRenderer();
-        Maze maze = new TestGenerator().generate(100,100);
+        Maze maze = new TestGenerator().generate(25,25);
         System.out.print(renderer.render(maze));
     }
 }
