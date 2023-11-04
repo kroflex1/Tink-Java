@@ -26,13 +26,14 @@ public class BreadthFirstSolver implements Solver {
 
         queue.add(start);
         track.put(start, null);
-        while (track.containsKey(end)) {
+        visited.add(start);
+        while (!track.containsKey(end)) {
             Coordinate startPoint = queue.poll();
             if (startPoint == null) {
-                throw new IllegalArgumentException("Impossible to find the path  from a given start point");
+                throw new RuntimeException("Impossible to find the path  from a given start point");
             }
             for (Coordinate neighboringPoint : maze.getNeighboringPoints(startPoint)) {
-                if (!visited.contains(neighboringPoint)) {
+                if (maze.getPointType(neighboringPoint) != CellType.WALL && !visited.contains(neighboringPoint)) {
                     visited.add(neighboringPoint);
                     track.put(neighboringPoint, startPoint);
                     queue.add(neighboringPoint);

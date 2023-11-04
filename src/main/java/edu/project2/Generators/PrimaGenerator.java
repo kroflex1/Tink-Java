@@ -45,7 +45,7 @@ public class PrimaGenerator implements Generator {
     @Nullable
     private Coordinate getRandomTwoPointAwayPassagePoint(Coordinate startPoint) {
         List<Coordinate> points = new ArrayList<>();
-        for (var currentPoint : maze.getNeighboringPoints(startPoint)) {
+        for (var currentPoint : maze.getNeighboringPoints(startPoint, 2)) {
             if (maze.getPointType(currentPoint) == CellType.PASSAGE) {
                 points.add(currentPoint);
             }
@@ -58,7 +58,7 @@ public class PrimaGenerator implements Generator {
 
     private List<Coordinate> getTwoPointAwayWallPoints(Coordinate startPoint) {
         List<Coordinate> points = new ArrayList<>();
-        for (Coordinate currentPoint : maze.getNeighboringPoints(startPoint)) {
+        for (Coordinate currentPoint : maze.getNeighboringPoints(startPoint, 2)) {
             if (this.maze.getPointType(currentPoint) == CellType.WALL) {
                 points.add(currentPoint);
             }

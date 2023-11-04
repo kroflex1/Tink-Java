@@ -19,10 +19,10 @@ public class Maze {
         }
     }
 
-    public List<Coordinate> getNeighboringPoints(Coordinate point) {
+    public List<Coordinate> getNeighboringPoints(Coordinate point, int distance) {
         List<Coordinate> points = new ArrayList<>();
-        for (int rowOffset = -2; rowOffset <= 2; rowOffset += 2) {
-            for (int columnOffset = -2; columnOffset <= 2; columnOffset += 2) {
+        for (int rowOffset = -distance; rowOffset <= distance; rowOffset += distance) {
+            for (int columnOffset = -distance; columnOffset <= distance; columnOffset += distance) {
                 Coordinate currentPoint = new Coordinate(point.row() + rowOffset, point.col() + columnOffset);
                 if (Math.abs(rowOffset) != Math.abs(columnOffset) && isPointInBoundary(currentPoint)) {
                     points.add(currentPoint);
@@ -30,6 +30,10 @@ public class Maze {
             }
         }
         return points;
+    }
+
+    public List<Coordinate> getNeighboringPoints(Coordinate point) {
+        return getNeighboringPoints(point, 1);
     }
 
     public boolean isPointInBoundary(Coordinate point) {
