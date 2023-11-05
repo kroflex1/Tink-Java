@@ -1,6 +1,6 @@
 package edu.project2;
 
-import edu.project2.Solvers.BreadthFirstSolver;
+import edu.project2.Solvers.BFS;
 import edu.project2.Solvers.Solver;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class BreadthFirstSolverTest {
+public class BFSTest {
     static Arguments[] mazes() {
         int[][] firstGrid = new int[][] {
             {0, 0, 0}
@@ -122,7 +122,7 @@ public class BreadthFirstSolverTest {
     @MethodSource("mazes")
     @DisplayName("Нахождение кратчайшего пути")
     void testFindShortestPath(Maze maze, List<Coordinate> shortestPath) {
-        Solver solver = new BreadthFirstSolver();
+        Solver solver = new BFS();
         Coordinate start = new Coordinate(0, 0);
         Coordinate end = new Coordinate(maze.getHeight() - 1, maze.getWidth() - 1);
         assertEquals(shortestPath, solver.solve(maze, start, end));
@@ -132,7 +132,7 @@ public class BreadthFirstSolverTest {
     @MethodSource("unattainablePath")
     @DisplayName("Вызов ошибки, при невозможности достичь другой точки")
     void testImpossibleToPavePath(Maze maze) {
-        Solver solver = new BreadthFirstSolver();
+        Solver solver = new BFS();
         Coordinate start = new Coordinate(0, 0);
         Coordinate end = new Coordinate(maze.getHeight() - 1, maze.getWidth() - 1);
         Exception exception = assertThrows(RuntimeException.class, () ->
@@ -148,7 +148,7 @@ public class BreadthFirstSolverTest {
             {1,1,1}
         };
         Maze maze = MazeHelper.convertToMaze(grid);
-        Solver solver = new BreadthFirstSolver();
+        Solver solver = new BFS();
         assertThrows(IllegalArgumentException.class, () ->
             solver.solve(maze, new Coordinate(0,0), new Coordinate(0,1)));
         assertThrows(IllegalArgumentException.class, () ->

@@ -3,32 +3,33 @@ package edu.project2.Solvers;
 import edu.project2.CellType;
 import edu.project2.Coordinate;
 import edu.project2.Maze;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 
-public class BreadthFirstSolver implements Solver {
-    Set<Coordinate> visited;
-    Map<Coordinate, Coordinate> track;
-    Queue<Coordinate> queue;
+abstract sealed class IfoSolver implements Solver permits BFS, DFS {
+
+    protected LinkedList<Coordinate> linkedList;
+    private Set<Coordinate> visited;
+    private Map<Coordinate, Coordinate> track;
 
     @Override
-    public List<Coordinate> solve(Maze maze, Coordinate start, Coordinate end) throws IllegalArgumentException {
+    public List<Coordinate> solve(Maze maze, Coordinate start, Coordinate end) {
         checkPoints(maze, start, end);
         visited = new HashSet<>();
         track = new HashMap<>();
-        queue = new LinkedList<>();
+        linkedList = new LinkedList<>();
 
-        queue.add(start);
+        linkedList.add(start);
         track.put(start, null);
         visited.add(start);
         while (!track.containsKey(end)) {
-            Coordinate startPoint = queue.poll();
+            Coordinate startPoint = getAndRemoveCoordinateFromLinkedList();
             if (startPoint == null) {
                 throw new RuntimeException("Impossible to find the path  from a given start point");
             }
@@ -36,7 +37,7 @@ public class BreadthFirstSolver implements Solver {
                 if (maze.getPointType(neighboringPoint) != CellType.WALL && !visited.contains(neighboringPoint)) {
                     visited.add(neighboringPoint);
                     track.put(neighboringPoint, startPoint);
-                    queue.add(neighboringPoint);
+                    linkedList.add(neighboringPoint);
                 }
             }
         }
@@ -54,12 +55,11 @@ public class BreadthFirstSolver implements Solver {
     }
 
     private void checkPoints(Maze maze, Coordinate start, Coordinate end) {
-        if (!maze.isPointInBoundary(start) || !maze.isPointInBoundary(end)) {
-            throw new IllegalArgumentException("Points are outside the boundary of the maze");
-        }
         if (maze.getPointType(start) == CellType.WALL || maze.getPointType(end) == CellType.WALL) {
             throw new IllegalArgumentException("Impossible to find the path, since one of the points is a wall");
         }
     }
-}
 
+    @Nullable
+    abstract Coordinate getAndRemoveCoordinateFromLinkedList();
+}
