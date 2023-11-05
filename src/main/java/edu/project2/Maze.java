@@ -32,6 +32,25 @@ public class Maze {
         return points;
     }
 
+    public void addPath(List<Coordinate> path) throws IllegalArgumentException {
+        for (Coordinate currentPoint : path) {
+            if (!isPointInBoundary(currentPoint)) {
+                throw new IllegalArgumentException(String.format(
+                    "Point(%d; %d) is located outside boundaries of maze",
+                    currentPoint.row(),
+                    currentPoint.col()
+                ));
+            }
+            if (getPointType(currentPoint) == CellType.WALL) {
+                throw new IllegalArgumentException(String.format("Point(%d; %d), can't build a path through a wall",
+                    currentPoint.row(),
+                    currentPoint.col()
+                ));
+            }
+            setPointType(currentPoint, CellType.PATH);
+        }
+    }
+
     public List<Coordinate> getNeighboringPoints(Coordinate point) {
         return getNeighboringPoints(point, 1);
     }

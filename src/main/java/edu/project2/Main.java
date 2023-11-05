@@ -6,7 +6,7 @@ import edu.project2.Renders.SimpleRenderer;
 public class Main {
     public static void main(String[] args) {
         SimpleRenderer renderer = new SimpleRenderer();
-        Maze maze = new PrimaGenerator().generate(5,5);
+        Maze maze = new PrimaGenerator().generate(25,25);
         System.out.print(renderer.render(maze));
     }
 }

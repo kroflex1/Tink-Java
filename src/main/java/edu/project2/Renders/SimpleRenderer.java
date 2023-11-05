@@ -13,21 +13,24 @@ public class SimpleRenderer implements Renderer {
             for (int column = 0; column < maze.getWidth(); ++column) {
                 result.append(getCellDisplay(maze.getPointType(row, column)));
             }
-            result.append('\n');
+            if (row != maze.getHeight() - 1) {
+                result.append('\n');
+            }
         }
         return result.toString();
     }
 
     @Override
     public String render(Maze maze, List<Coordinate> path) {
-        return null;
+        maze.addPath(path);
+        return render(maze);
     }
 
     private String getCellDisplay(CellType cellType) {
         return switch (cellType) {
             case CellType.PASSAGE -> " ";
             case CellType.WALL -> "▉";
-            case CellType.PATH -> "‧";
+            case CellType.PATH -> "·";
         };
     }
 

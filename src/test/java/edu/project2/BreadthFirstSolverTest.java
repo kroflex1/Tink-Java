@@ -1,17 +1,13 @@
 package edu.project2;
 
-import edu.hw2.Task2.Rectangle;
-import edu.hw2.Task2.Square;
 import edu.project2.Solvers.BreadthFirstSolver;
 import edu.project2.Solvers.Solver;
-import org.apache.logging.log4j.core.Core;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import java.util.ArrayList;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
