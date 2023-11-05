@@ -3,12 +3,12 @@ package edu.project2.Generators;
 import edu.project2.CellType;
 import edu.project2.Coordinate;
 import edu.project2.Maze;
-import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import org.jetbrains.annotations.Nullable;
 
 public class PrimaGenerator implements Generator {
 

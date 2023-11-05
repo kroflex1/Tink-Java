@@ -3,7 +3,6 @@ package edu.project2.Solvers;
 import edu.project2.CellType;
 import edu.project2.Coordinate;
 import edu.project2.Maze;
-import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.jetbrains.annotations.Nullable;
 
 abstract sealed class IfoSolver implements Solver permits BFS, DFS {
 
