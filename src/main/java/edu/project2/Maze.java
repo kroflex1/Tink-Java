@@ -19,7 +19,13 @@ public class Maze {
         }
     }
 
-    public List<Coordinate> getNeighboringPoints(Coordinate point, int distance) {
+    public List<Coordinate> getNeighboringPoints(Coordinate point, int distance) throws IllegalArgumentException {
+        if (!isPointInBoundary(point)) {
+            throw new IllegalArgumentException(getMessageForOutOfBoundaryPoint(point));
+        }
+        if (distance <= 0) {
+            throw new IllegalArgumentException("Distance must be greater than zero");
+        }
         List<Coordinate> points = new ArrayList<>();
         for (int rowOffset = -distance; rowOffset <= distance; rowOffset += distance) {
             for (int columnOffset = -distance; columnOffset <= distance; columnOffset += distance) {
@@ -32,17 +38,18 @@ public class Maze {
         return points;
     }
 
+    public List<Coordinate> getNeighboringPoints(Coordinate point) {
+        return getNeighboringPoints(point, 1);
+    }
+
     public void addPath(List<Coordinate> path) throws IllegalArgumentException {
         for (Coordinate currentPoint : path) {
             if (!isPointInBoundary(currentPoint)) {
-                throw new IllegalArgumentException(String.format(
-                    "Point(%d; %d) is located outside boundaries of maze",
-                    currentPoint.row(),
-                    currentPoint.col()
-                ));
+                throw new IllegalArgumentException(getMessageForOutOfBoundaryPoint(currentPoint));
             }
             if (getPointType(currentPoint) == CellType.WALL) {
-                throw new IllegalArgumentException(String.format("Point(%d; %d), can't build a path through a wall",
+                throw new IllegalArgumentException(String.format(
+                    "Point(%d; %d), can't build a path through a wall",
                     currentPoint.row(),
                     currentPoint.col()
                 ));
@@ -51,9 +58,6 @@ public class Maze {
         }
     }
 
-    public List<Coordinate> getNeighboringPoints(Coordinate point) {
-        return getNeighboringPoints(point, 1);
-    }
 
     public boolean isPointInBoundary(Coordinate point) {
         return point.row() >= 0 && point.row() < height && point.col() >= 0 && point.col() < width;
@@ -81,5 +85,13 @@ public class Maze {
 
     public int getWidth() {
         return width;
+    }
+
+    private String getMessageForOutOfBoundaryPoint(Coordinate point) {
+        return String.format(
+            "Point(%d; %d) is located outside boundaries of maze",
+            point.row(),
+            point.col()
+        );
     }
 }
