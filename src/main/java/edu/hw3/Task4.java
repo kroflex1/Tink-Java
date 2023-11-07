@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class Task4 {
 
-    private static Map<Integer, String> arabicToRoman = getArabicToRomanMap();
+    private final static Map<Integer, String> ARABIC_TO_ROMAN = getArabicToRomanMap();
     private static final int MIN_VALUE = 1;
     private static final int MAX_VALUE = 3999;
 
@@ -24,14 +24,14 @@ public class Task4 {
                 continue;
             }
             if (remains < 4) {
-                result.add(arabicToRoman.get(multiplier).repeat(remains));
+                result.add(ARABIC_TO_ROMAN.get(multiplier).repeat(remains));
             } else if (remains <= 6) {
-                result.add(arabicToRoman.get(remains * multiplier));
+                result.add(ARABIC_TO_ROMAN.get(remains * multiplier));
             } else if (remains <= 8) {
-                result.add(arabicToRoman.get(multiplier).repeat(remains - 6));
-                result.add(arabicToRoman.get(6 * multiplier));
+                result.add(ARABIC_TO_ROMAN.get(multiplier).repeat(remains - 6));
+                result.add(ARABIC_TO_ROMAN.get(6 * multiplier));
             } else {
-                result.add(arabicToRoman.get(9 * multiplier));
+                result.add(ARABIC_TO_ROMAN.get(9 * multiplier));
             }
             multiplier *= 10;
         }

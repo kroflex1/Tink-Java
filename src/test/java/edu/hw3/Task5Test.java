@@ -32,12 +32,12 @@ public class Task5Test {
     static Stream<Arguments> people() {
         return Stream.of(
             arguments(
-                convertStringListToHumanList(Arrays.asList(
+                Arrays.asList(
                     "John Locke",
                     "Thomas Aquinas",
                     "David Hume",
                     "Rene Descartes"
-                )),
+                ),
                 SortingMethod.ASC,
                 convertStringListToHumanList(Arrays.asList(
                     "Thomas Aquinas",
@@ -47,12 +47,12 @@ public class Task5Test {
                 ))
             ),
             arguments(
-                convertStringListToHumanList(Arrays.asList("Paul Erdos", "Leonhard Euler", "Carl Gauss")),
+                Arrays.asList("Paul Erdos", "Leonhard Euler", "Carl Gauss"),
                 SortingMethod.DESC,
                 convertStringListToHumanList(Arrays.asList("Carl Gauss", "Leonhard Euler", "Paul Erdos"))
             ),
             arguments(
-                convertStringListToHumanList(Arrays.asList("Ben", "Leonhard", "Carl Gauss")),
+                Arrays.asList("Ben", "Leonhard", "Carl Gauss"),
                 SortingMethod.ASC,
                 convertStringListToHumanList(Arrays.asList("Ben", "Carl Gauss", "Leonhard"))
             ),
@@ -86,7 +86,7 @@ public class Task5Test {
     @ParameterizedTest
     @MethodSource("people")
     @DisplayName("Сортировка людей")
-    void testSorting(List<Human> people, SortingMethod sortingMethod, List<Human> except) {
+    void testSorting(List<String> people, SortingMethod sortingMethod, List<Human> except) {
         assertEquals(except, ContactParser.parseContacts(people, sortingMethod));
     }
 
