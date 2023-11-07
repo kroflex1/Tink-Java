@@ -28,8 +28,8 @@ public class Task2 {
     public static LocalDate getNearestNextFriday13th(LocalDate startDate) {
         LocalDate currentDate = startDate;
         while (true) {
-            if (currentDate.getDayOfMonth() == NUMBER_OF_TERRIFYING_FRIDAY &&
-                currentDate.getDayOfWeek() == DayOfWeek.FRIDAY) {
+            if (currentDate.getDayOfMonth() == NUMBER_OF_TERRIFYING_FRIDAY
+                && currentDate.getDayOfWeek() == DayOfWeek.FRIDAY) {
                 return currentDate;
             }
             currentDate =
