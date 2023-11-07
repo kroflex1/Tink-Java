@@ -33,6 +33,7 @@ public class Task3Test {
             Arguments.of("11yesterday11"),
             Arguments.of("-1 day ago"),
             Arguments.of("-2234 days ago"),
+            Arguments.of("aaaa2234 days agoaaaa"),
         };
     }
 

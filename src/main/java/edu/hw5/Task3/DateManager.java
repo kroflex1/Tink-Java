@@ -16,7 +16,7 @@ public class DateManager {
             .findFirst();
     }
 
-    private DateManager(){
+    private DateManager() {
 
     }
 }

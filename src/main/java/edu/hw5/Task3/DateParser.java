@@ -6,5 +6,5 @@ import org.jetbrains.annotations.Nullable;
 
 interface DateParser {
     @Nullable
-    public LocalDate parseDate(String date);
+    LocalDate parseDate(String date);
 }
