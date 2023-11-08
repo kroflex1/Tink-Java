@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class Task6 {
 
-    public static boolean solve(String word, String subsequence) {
+    public static boolean isContainSubsequence(String word, String subsequence) {
         StringBuilder regex = new StringBuilder();
         for (int i = 0; i < subsequence.length(); ++i) {
             regex.append("\\Q").append(subsequence.charAt(i)).append("\\E").append(".*");

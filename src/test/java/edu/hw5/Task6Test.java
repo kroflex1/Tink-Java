@@ -20,7 +20,9 @@ public class Task6Test {
             Arguments.of("\\d{100}", "\\d{100}", true),
             Arguments.of("Hello.124{45}", ".{45}", true),
             Arguments.of("cab", "abc", false),
-            Arguments.of("123a123b", "abc", false)
+            Arguments.of("123a123b", "abc", false),
+            Arguments.of("abc", "abcde", false)
+
         };
     }
 
@@ -28,6 +30,6 @@ public class Task6Test {
     @ParameterizedTest
     @MethodSource("words")
     void test(String word, String subsequence, boolean except){
-        assertEquals(except, Task6.solve(word, subsequence));
+        assertEquals(except, Task6.isContainSubsequence(word, subsequence));
     }
 }
