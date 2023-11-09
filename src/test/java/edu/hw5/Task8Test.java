@@ -66,20 +66,6 @@ public class Task8Test {
         assertFalse(Task8.solve4(word));
     }
 
-//    @ParameterizedTest
-//    @CsvSource(value = {"1", "10", "101", "111", "101", "10101", "111111"})
-//    @DisplayName("Строка соответствует условию: каждый нечетный символ равен 1")
-//    void testMatchSolve5(String word) {
-//        assertTrue(Task8.solve5(word));
-//    }
-//
-//    @ParameterizedTest
-//    @CsvSource(value = {"0", "110", "011", "1abc", "abc101abc"})
-//    @DisplayName("Строка НЕ соответствует условию: каждый нечетный символ равен 1")
-//    void testCantMatchSolve5(String word) {
-//        assertFalse(Task8.solve5(word));
-//    }
-
     @ParameterizedTest
     @CsvSource(value = {"10000", "010", "001", "000000100000", "000000001", "100000"})
     @DisplayName("Строка соответствует условию: содержит не менее двух 0 и не более одной 1")
@@ -92,6 +78,21 @@ public class Task8Test {
     @DisplayName("Строка НЕ соответствует условию: содержит не менее двух 0 и не более одной 1")
     void testCantMatchSolve6(String word) {
         assertFalse(Task8.solve6(word));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"1", "01", "10", "010", "101", "1010101", "0101010", "000010001001", "1010100101", "000000",
+        "0"})
+    @DisplayName("Строка соответствует условию: нет последовательных 1")
+    void testMatchSolve7(String word) {
+        assertTrue(Task8.solve7(word));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"11", "10101011", "00011", "1111000111", "abc101", "abc101abc", "101abc", "11111"})
+    @DisplayName("Строка НЕ соответствует условию: нет последовательных 1")
+    void testCantMatchSolve7(String word) {
+        assertFalse(Task8.solve7(word));
     }
 
 }

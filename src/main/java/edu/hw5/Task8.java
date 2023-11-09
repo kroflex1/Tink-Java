@@ -35,13 +35,6 @@ public class Task8 {
         return !badMatcher.matches() && matcher.matches();
     }
 
-//    //Каждый нечетный символ равен 1
-//    public static boolean solve5(String word) {
-//        Pattern pattern = Pattern.compile("(1[01]?)*");
-//        Matcher matcher = pattern.matcher(word);
-//        return matcher.matches();
-//    }
-
     //Содержит не менее двух 0 и не более одной 1
     public static boolean solve6(String word) {
         Pattern pattern = Pattern.compile("(10{2,})|(0+10+)|(0{2,}1)");
@@ -49,7 +42,14 @@ public class Task8 {
         return matcher.matches();
     }
 
-
+    //нет последовательных 1
+    public static boolean solve7(String word) {
+        Pattern badPattern = Pattern.compile("11");
+        Matcher badMatcher = badPattern.matcher(word);
+        Pattern goodPattern = Pattern.compile("[01]*");
+        Matcher goodMatcher = goodPattern.matcher(word);
+        return goodMatcher.matches() && !badMatcher.find();
+    }
 
     private Task8() {
 
