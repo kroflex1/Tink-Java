@@ -70,7 +70,8 @@ public class Task1Test {
         );
     }
 
-    private final File FILE_PATH = new File(new File("").getAbsoluteFile(), "/src/test/java/edu/hw6/diskMap.txt");
+    private final File FILE_PATH =
+        new File(new File("").getAbsoluteFile(), "/src/test/java/edu/hw6/diskMap.txt");
 
     @AfterEach
     void removeFile() {
