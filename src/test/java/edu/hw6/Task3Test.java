@@ -5,32 +5,26 @@ import edu.hw6.Task3.ExtensionFilter;
 import edu.hw6.Task3.MagicInitialIdentityFilter;
 import edu.hw6.Task3.RegexFilter;
 import edu.hw6.Task3.SizeFilter;
-import org.junit.jupiter.api.AfterEach;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
 import static java.nio.file.Files.newDirectoryStream;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class Task3Test {
 
     private static final Path ROOT =
-        Paths.get(Paths.get("").toAbsolutePath().toString(), "/src/test/java/edu/hw6/Task3TestDirectory");
+        Paths.get(Paths.get("").toAbsolutePath().toString(), "/src/test/java/edu/hw6/resources/Task3Resources");
 
     static Stream<Arguments> attributeDirectories() {
         Path directoryWithReadableFiles = Paths.get(ROOT.toString(), "/readableAndWritableFiles");

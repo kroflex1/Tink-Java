@@ -20,7 +20,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 public class Task2Test {
 
     private static final Path ROOT =
-        Paths.get(Paths.get("").toAbsolutePath().toString(), "/src/test/java/edu/hw6/Task2TestDirectory");
+        Paths.get(Paths.get("").toAbsolutePath().toString(), "/src/test/java/edu/hw6/resources/Task2Resources");
 
     @AfterEach
     void removeAllFilesInDirectory() {

@@ -26,6 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class Task1Test {
+    private final File FILE_PATH =
+        new File(new File("").getAbsoluteFile(), "/src/test/java/edu/hw6/resources/Task1Resources/diskMap.txt");
+
     static Stream<Arguments> validPairs() {
         Map<String, String> firstMap = new HashMap<>() {{
             put("hello", "hey");
@@ -69,9 +72,6 @@ public class Task1Test {
             arguments(secondMap)
         );
     }
-
-    private final File FILE_PATH =
-        new File(new File("").getAbsoluteFile(), "/src/test/java/edu/hw6/diskMap.txt");
 
     @AfterEach
     void removeFile() {
