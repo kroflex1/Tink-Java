@@ -6,8 +6,6 @@ import java.nio.file.Path;
 public interface AbstractFilter extends DirectoryStream.Filter<Path> {
 
     default AbstractFilter add(AbstractFilter abstractFilter) {
-        DirectoryStream.Filter<Path> firstMethod = abstractFilter;
-        AbstractFilter result = (Path entry) -> firstMethod.accept(entry) && this.accept(entry);
-        return result;
+        return (Path entry) -> abstractFilter.accept(entry) && this.accept(entry);
     }
 }
