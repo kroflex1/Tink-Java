@@ -82,13 +82,14 @@ public class Task1Test {
 
     @AfterEach
     void removeFile() {
-        try {
-            Files.delete(FILE_PATH);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (Files.exists(FILE_PATH)) {
+            try {
+                Files.delete(FILE_PATH);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
-
 
     @Test
     @DisplayName("Проверка создания файла")
