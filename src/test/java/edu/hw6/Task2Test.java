@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -18,42 +19,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class Task2Test {
-
-    private static final Path ROOT =
-        Paths.get(Paths.get("").toAbsolutePath().toString(), "/src/test/java/edu/hw6/resources/Task2Resources");
-
-    @AfterEach
-    void removeAllFilesInDirectory() {
-        try (Stream<Path> stream = Files.list(ROOT)) {
-            List<Path> paths = stream.toList();
-            for (Path currentPath : paths) {
-                Files.delete(currentPath);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     static Stream<Arguments> files() {
-        Path origin = Paths.get(ROOT.toString(), "/Tinkoff.txt");
+        String origin =  "Tinkoff.txt";
 
-        List<Path> firstStartFiles = List.of(origin);
+        List<String> firstStartFiles = List.of(origin);
         int firstNumberOfCopies = 3;
-        List<Path> firstExcept =
+        List<String> firstExcept =
             new ArrayList<>(List.of(copyPath(origin, 1), copyPath(origin, 2), copyPath(origin, 3)));
         firstExcept.addAll(firstStartFiles);
 
-        List<Path> secondStartFiles = List.of(origin, copyPath(origin, 7), copyPath(origin, 8));
+        List<String> secondStartFiles = List.of(origin, copyPath(origin, 7), copyPath(origin, 8));
         int secondNumberOfCopies = 1;
-        List<Path> secondExcept = new ArrayList<>(List.of(copyPath(origin, 9)));
+        List<String> secondExcept = new ArrayList<>(List.of(copyPath(origin, 9)));
         secondExcept.addAll(secondStartFiles);
 
-        List<Path> thirdStartFiles = List.of(origin,
-            Paths.get(ROOT.toString(), "/Tinkoff deception.txt"),
-            Paths.get(ROOT.toString(), "/someFile.txt")
-        );
+        List<String> thirdStartFiles = List.of(origin, "Tinkoff deception.txt", "someFile.txt");
         int thirdNumberOfCopies = 3;
-        List<Path> thirdExcept =
+        List<String> thirdExcept =
             new ArrayList<>(List.of(copyPath(origin, 1), copyPath(origin, 2), copyPath(origin, 3)));
         secondExcept.addAll(secondStartFiles);
 
@@ -67,20 +49,23 @@ public class Task2Test {
     @ParameterizedTest
     @MethodSource("files")
     @DisplayName("Создание копий файла")
-    void testCloneFiles(Path origin, List<Path> startFiles, int numberOfCopies, List<Path> except) {
-        createFiles(startFiles);
+    void testCloneFiles(String originFileName, List<String> startFilesNames, int numberOfCopies, List<String> exceptFilesNames, @TempDir Path tempDir) {
+        createFiles(startFilesNames, tempDir);
         for (int i = 0; i < numberOfCopies; ++i) {
-            Task2.cloneFile(origin);
+            Task2.cloneFile(tempDir.resolve(originFileName));
         }
-        assertTrue(isFilesInDirectory(except));
+        List<Path> exceptFiles = new ArrayList<>();
+        for(String exceptFileName: exceptFilesNames){
+            exceptFiles.add(tempDir.resolve(exceptFileName));
+        }
+        assertTrue(isFilesInDirectory(exceptFiles));
     }
 
     @Test
     @DisplayName("Вызов ошибки при попытке клонировать несуществующий файл")
-    void testNotExistFile() {
-        Path origin = Paths.get(ROOT.toString(), "/Tinkoff.txt");
+    void testNotExistFile(@TempDir Path tempDir) {
         assertThrows(IllegalArgumentException.class, () ->
-            Task2.cloneFile(origin));
+            Task2.cloneFile(tempDir.resolve("nonExistentFile.txt")));
     }
 
     private static boolean isFilesInDirectory(List<Path> paths) {
@@ -92,18 +77,18 @@ public class Task2Test {
         return true;
     }
 
-    private static Path copyPath(Path source, int index) {
-        String[] parts = source.getFileName().toString().split("\\.");
+    private static String copyPath(String source, int index) {
+        String[] parts = source.split("\\.");
         String fileNameWithoutExtension = parts[0];
         String extension = "." + parts[1];
         String copyInformation = index == 1 ? " — копия" : String.format(" — копия (%d)", index);
-        return Paths.get(source.getParent().toString(), fileNameWithoutExtension + copyInformation + extension);
+        return fileNameWithoutExtension + copyInformation + extension;
     }
 
-    private void createFiles(List<Path> paths) {
-        for (Path currentPath : paths) {
+    private void createFiles(List<String> paths, Path dir) {
+        for (String currentPath : paths) {
             try {
-                Files.createFile(currentPath);
+                Files.createFile(dir.resolve(currentPath));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
