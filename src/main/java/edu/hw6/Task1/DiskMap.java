@@ -2,12 +2,10 @@ package edu.hw6.Task1;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,17 +15,17 @@ import org.jetbrains.annotations.Nullable;
 
 public class DiskMap implements Map<String, String> {
     private final HashMap<String, String> hashMap;
-    private final File dataStorageFile;
+    private final Path dataStoragePath;
     private static final String FILE_SEPARATOR = System.getProperty("line.separator");
 
-    public DiskMap(File file) {
+    public DiskMap(Path path) {
         hashMap = new HashMap<>();
-        if (!isValidFilePath(file)) {
+        dataStoragePath = path;
+        if (!isValidPath(path)) {
             throw new IllegalArgumentException("Invalid file path");
         }
-        dataStorageFile = file;
         try {
-            dataStorageFile.createNewFile();
+            Files.createFile(path);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -96,9 +94,10 @@ public class DiskMap implements Map<String, String> {
 
     @Override
     public void clear() {
-        try (PrintWriter writer = new PrintWriter(dataStorageFile)) {
-            writer.print("");
-        } catch (FileNotFoundException e) {
+        try (BufferedWriter writer = Files.newBufferedWriter(dataStoragePath)) {
+            writer.write("");
+            writer.flush();
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -140,7 +139,7 @@ public class DiskMap implements Map<String, String> {
     }
 
     private void addNewPairInFile(String key, String value) {
-        try (BufferedWriter reader = new BufferedWriter(new FileWriter(dataStorageFile, true))) {
+        try (BufferedWriter reader = new BufferedWriter(Files.newBufferedWriter(dataStoragePath))) {
             reader.write(key + ":" + value + FILE_SEPARATOR);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -148,10 +147,14 @@ public class DiskMap implements Map<String, String> {
     }
 
     private void removePairInFile(String key) {
-        File tempFile = new File(dataStorageFile.getParent() + "/tempDiskMapFile.txt");
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(dataStorageFile));
-             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+        Path tempFile = null;
+        try {
+            tempFile = Files.createTempFile("tempfiles", ".tmp");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try (BufferedReader reader = Files.newBufferedReader(dataStoragePath);
+             BufferedWriter writer = Files.newBufferedWriter(tempFile)) {
             String currentLine;
             while ((currentLine = reader.readLine()) != null) {
                 String[] items = currentLine.split(":");
@@ -160,15 +163,14 @@ public class DiskMap implements Map<String, String> {
                 }
                 writer.write(currentLine + FILE_SEPARATOR);
             }
+            Files.move(tempFile, dataStoragePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        dataStorageFile.delete();
-        tempFile.renameTo(dataStorageFile);
     }
 
-    private boolean isValidFilePath(File file) {
-        return !file.exists();
+    private boolean isValidPath(Path path) {
+        return !Files.exists(path) && !Files.isDirectory(path);
     }
 
     private void checkKeyAndValue(String key, String value) throws IllegalArgumentException {

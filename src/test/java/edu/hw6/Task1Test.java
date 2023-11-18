@@ -5,6 +5,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +16,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,8 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class Task1Test {
-    private final File FILE_PATH =
-        new File(new File("").getAbsoluteFile(), "/src/test/java/edu/hw6/resources/Task1Resources/diskMap.txt");
+    private static final Path FILE_PATH =
+        Paths.get(
+            Paths.get("").toAbsolutePath().toString(),
+            "/src/test/java/edu/hw6/resources/Task1Resources/diskMap.txt"
+        );
 
     static Stream<Arguments> validPairs() {
         Map<String, String> firstMap = new HashMap<>() {{
@@ -75,21 +82,26 @@ public class Task1Test {
 
     @AfterEach
     void removeFile() {
-        FILE_PATH.delete();
+        try {
+            Files.delete(FILE_PATH);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
+
 
     @Test
     @DisplayName("Проверка создания файла")
     void testCreateFile() {
         DiskMap diskMap = new DiskMap(FILE_PATH);
-        assertTrue(FILE_PATH.exists());
+        assertTrue(Files.exists(FILE_PATH));
     }
 
     @Test
     @DisplayName("Вызов ошибки, если в заданном пути уже существует файл")
     void testInvalidFilePath() {
         try {
-            FILE_PATH.createNewFile();
+            Files.createFile(FILE_PATH);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -131,24 +143,17 @@ public class Task1Test {
     @MethodSource("validPairs")
     @DisplayName("Удаление элементов поштучно")
     void testRemoveElements(Map<String, String> map) {
-        Map<String, String> pairs = new HashMap<>() {{
-            put("hello", "hey");
-            put("1234", "4321");
-            put("Borya", "Varya");
-            put("Apple", "fruit");
-            put("game", "minecraft");
-        }};
         List<String> removeKeys = List.of(getRandomKey(map), getRandomKey(map));
 
         DiskMap diskMap = new DiskMap(FILE_PATH);
-        for (Map.Entry<? extends String, ? extends String> entry : pairs.entrySet()) {
+        for (Map.Entry<? extends String, ? extends String> entry : map.entrySet()) {
             diskMap.put(entry.getKey(), entry.getValue());
         }
         for (String removeKey : removeKeys) {
             diskMap.remove(removeKey);
-            pairs.remove(removeKey);
+            map.remove(removeKey);
         }
-        assertTrue(isPairsInFile(pairs.entrySet()));
+        assertTrue(isPairsInFile(map.entrySet()));
         assertFalse(isHaveFileEmptyLines());
     }
 
@@ -189,7 +194,7 @@ public class Task1Test {
     }
 
     boolean isPairsInFile(Set<Map.Entry<String, String>> pairs) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+        try (BufferedReader reader = Files.newBufferedReader(FILE_PATH)) {
             String currentLine;
             while ((currentLine = reader.readLine()) != null) {
                 String[] keyAndValue = currentLine.split(":");
@@ -205,7 +210,7 @@ public class Task1Test {
     }
 
     boolean isHaveFileEmptyLines() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+        try (BufferedReader reader = Files.newBufferedReader(FILE_PATH)) {
             String currentLine;
             while ((currentLine = reader.readLine()) != null) {
                 if (currentLine.isEmpty()) {
