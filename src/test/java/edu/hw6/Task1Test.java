@@ -20,6 +20,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -30,12 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class Task1Test {
-    private static final Path FILE_PATH =
-        Paths.get(
-            Paths.get("").toAbsolutePath().toString(),
-            "/src/test/java/edu/hw6/resources/Task1Resources/diskMap.txt"
-        );
-
     static Stream<Arguments> validPairs() {
         Map<String, String> firstMap = new HashMap<>() {{
             put("hello", "hey");
@@ -80,54 +75,47 @@ public class Task1Test {
         );
     }
 
-    @AfterEach
-    void removeFile() {
-        if (Files.exists(FILE_PATH)) {
-            try {
-                Files.delete(FILE_PATH);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
     @Test
     @DisplayName("Проверка создания файла")
-    void testCreateFile() {
-        DiskMap diskMap = new DiskMap(FILE_PATH);
-        assertTrue(Files.exists(FILE_PATH));
+    void testCreateFile(@TempDir Path tempDir) {
+        Path diskMapPath = tempDir.resolve("diskmap.txt");
+        DiskMap diskMap = new DiskMap(diskMapPath);
+        assertTrue(Files.exists(diskMapPath));
     }
 
     @Test
     @DisplayName("Вызов ошибки, если в заданном пути уже существует файл")
-    void testInvalidFilePath() {
+    void testInvalidFilePath(@TempDir Path tempDir) {
+        Path diskMapPath = tempDir.resolve("diskmap.txt");
         try {
-            Files.createFile(FILE_PATH);
+            Files.createFile(diskMapPath);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-            new DiskMap(FILE_PATH));
+            new DiskMap(diskMapPath));
         assertEquals("Invalid file path", exception.getMessage());
     }
 
     @ParameterizedTest
     @MethodSource("validPairs")
     @DisplayName("Добавление эелементов")
-    void testPutElements(Map<String, String> map) {
-        DiskMap diskMap = new DiskMap(FILE_PATH);
+    void testPutElements(Map<String, String> map, @TempDir Path tempDir) {
+        Path diskMapPath = tempDir.resolve("diskmap.txt");
+        DiskMap diskMap = new DiskMap(diskMapPath);
         for (Map.Entry<? extends String, ? extends String> entry : map.entrySet()) {
             diskMap.put(entry.getKey(), entry.getValue());
         }
-        assertTrue(isPairsInFile(map.entrySet()));
-        assertFalse(isHaveFileEmptyLines());
+        assertTrue(isPairsInFile(map.entrySet(), diskMapPath));
+        assertFalse(isHaveFileEmptyLines(diskMapPath));
     }
 
     @ParameterizedTest
     @MethodSource("validPairs")
     @DisplayName("Добавление эелементов с повторяющимися ключами")
-    void testPutElementsWithSameKeys(Map<String, String> map) {
-        DiskMap diskMap = new DiskMap(FILE_PATH);
+    void testPutElementsWithSameKeys(Map<String, String> map, @TempDir Path tempDir) {
+        Path diskMapPath = tempDir.resolve("diskmap.txt");
+        DiskMap diskMap = new DiskMap(diskMapPath);
         for (Map.Entry<? extends String, ? extends String> entry : map.entrySet()) {
             diskMap.put(entry.getKey(), entry.getValue());
         }
@@ -136,17 +124,17 @@ public class Task1Test {
         diskMap.put(randomKey, newValue);
         map.put(randomKey, newValue);
 
-        assertTrue(isPairsInFile(map.entrySet()));
-        assertFalse(isHaveFileEmptyLines());
+        assertTrue(isPairsInFile(map.entrySet(), diskMapPath));
+        assertFalse(isHaveFileEmptyLines(diskMapPath));
     }
 
     @ParameterizedTest
     @MethodSource("validPairs")
     @DisplayName("Удаление элементов поштучно")
-    void testRemoveElements(Map<String, String> map) {
+    void testRemoveElements(Map<String, String> map, @TempDir Path tempDir) {
+        Path diskMapPath = tempDir.resolve("diskmap.txt");
         List<String> removeKeys = List.of(getRandomKey(map), getRandomKey(map));
-
-        DiskMap diskMap = new DiskMap(FILE_PATH);
+        DiskMap diskMap = new DiskMap(diskMapPath);
         for (Map.Entry<? extends String, ? extends String> entry : map.entrySet()) {
             diskMap.put(entry.getKey(), entry.getValue());
         }
@@ -154,36 +142,39 @@ public class Task1Test {
             diskMap.remove(removeKey);
             map.remove(removeKey);
         }
-        assertTrue(isPairsInFile(map.entrySet()));
-        assertFalse(isHaveFileEmptyLines());
+        assertTrue(isPairsInFile(map.entrySet(), diskMapPath));
+        assertFalse(isHaveFileEmptyLines(diskMapPath));
     }
 
     @ParameterizedTest
     @MethodSource("validPairs")
     @DisplayName("Добавление сразу всех элементов из другого Map")
-    void testPutAllElementsFromAnotherMap(Map<String, String> map) {
-        DiskMap diskMap = new DiskMap(FILE_PATH);
+    void testPutAllElementsFromAnotherMap(Map<String, String> map, @TempDir Path tempDir) {
+        Path diskMapPath = tempDir.resolve("diskmap.txt");
+        DiskMap diskMap = new DiskMap(diskMapPath);
         diskMap.putAll(map);
-        assertTrue(isPairsInFile(map.entrySet()));
-        assertFalse(isHaveFileEmptyLines());
+        assertTrue(isPairsInFile(map.entrySet(), diskMapPath));
+        assertFalse(isHaveFileEmptyLines(diskMapPath));
     }
 
     @ParameterizedTest
     @MethodSource("validPairs")
     @DisplayName("Очистка файла")
-    void testClearFile(Map<String, String> map) {
-        DiskMap diskMap = new DiskMap(FILE_PATH);
+    void testClearFile(Map<String, String> map, @TempDir Path tempDir) {
+        Path diskMapPath = tempDir.resolve("diskmap.txt");
+        DiskMap diskMap = new DiskMap(diskMapPath);
         diskMap.putAll(map);
         diskMap.clear();
         assertTrue(diskMap.isEmpty());
-        assertFalse(isHaveFileEmptyLines());
+        assertFalse(isHaveFileEmptyLines(diskMapPath));
     }
 
     @ParameterizedTest
     @MethodSource("invalidPairs")
     @DisplayName("Вызов ошибки при некорректных значениях")
-    void testTryPutInvalidElements(Map<String, String> map) {
-        DiskMap diskMap = new DiskMap(FILE_PATH);
+    void testTryPutInvalidElements(Map<String, String> map, @TempDir Path tempDir) {
+        Path diskMapPath = tempDir.resolve("diskmap.txt");
+        DiskMap diskMap = new DiskMap(diskMapPath);
         for (Map.Entry<? extends String, ? extends String> entry : map.entrySet()) {
             assertThrows(IllegalArgumentException.class, () ->
                 diskMap.put(entry.getKey(), entry.getValue()));
@@ -191,11 +182,11 @@ public class Task1Test {
         assertThrows(IllegalArgumentException.class, () ->
             diskMap.putAll(map));
         assertTrue(diskMap.isEmpty());
-        assertFalse(isHaveFileEmptyLines());
+        assertFalse(isHaveFileEmptyLines(diskMapPath));
     }
 
-    boolean isPairsInFile(Set<Map.Entry<String, String>> pairs) {
-        try (BufferedReader reader = Files.newBufferedReader(FILE_PATH)) {
+    boolean isPairsInFile(Set<Map.Entry<String, String>> pairs, Path path) {
+        try (BufferedReader reader = Files.newBufferedReader(path)) {
             String currentLine;
             while ((currentLine = reader.readLine()) != null) {
                 String[] keyAndValue = currentLine.split(":");
@@ -210,8 +201,8 @@ public class Task1Test {
         return true;
     }
 
-    boolean isHaveFileEmptyLines() {
-        try (BufferedReader reader = Files.newBufferedReader(FILE_PATH)) {
+    boolean isHaveFileEmptyLines(Path path) {
+        try (BufferedReader reader = Files.newBufferedReader(path)) {
             String currentLine;
             while ((currentLine = reader.readLine()) != null) {
                 if (currentLine.isEmpty()) {
