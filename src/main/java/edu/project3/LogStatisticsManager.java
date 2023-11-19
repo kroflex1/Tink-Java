@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
 import org.jetbrains.annotations.Nullable;
 
 public class LogStatisticsManager {
 
+    @SuppressWarnings("MagicNumber")
     private static final Map<Integer, ResponseCode> RESPONSE_CODES = new HashMap<>() {{
         put(202, new ResponseCode(202, "Accepted"));
         put(502, new ResponseCode(502, "Bad Gateway"));
@@ -38,8 +38,8 @@ public class LogStatisticsManager {
         Map<String, Long> numberOfCertainResources = new HashMap<>();
         Map<ResponseCode, Long> responseCodes = new HashMap<>();
         for (LogInf currentLog : logs) {
-            if ((from == null || currentLog.timeLocal().isAfter(from)) &&
-                (to == null || currentLog.timeLocal().isBefore(to))) {
+            if ((from == null || currentLog.timeLocal().isAfter(from))
+                && (to == null || currentLog.timeLocal().isBefore(to))) {
                 numberOfRequests++;
                 sumOfBytes += currentLog.bodyBytesSent();
                 numberOfCertainResources.putIfAbsent(currentLog.resource(), 0L);
@@ -48,8 +48,8 @@ public class LogStatisticsManager {
                     numberOfCertainResources.get(currentLog.resource()) + 1
                 );
                 ResponseCode currentResponseCode =
-                    RESPONSE_CODES.containsKey(currentLog.status()) ? RESPONSE_CODES.get(currentLog.status()) :
-                        new ResponseCode(currentLog.status(), "N/A");
+                    RESPONSE_CODES.containsKey(currentLog.status()) ? RESPONSE_CODES.get(currentLog.status())
+                        : new ResponseCode(currentLog.status(), "N/A");
                 responseCodes.putIfAbsent(currentResponseCode, 0L);
                 responseCodes.put(currentResponseCode, responseCodes.get(currentResponseCode) + 1);
             }
@@ -63,5 +63,9 @@ public class LogStatisticsManager {
             numberOfCertainResources,
             responseCodes
         );
+    }
+
+    private LogStatisticsManager() {
+
     }
 }

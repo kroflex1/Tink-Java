@@ -6,7 +6,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public record LogStatistics(List<String> files, Optional<OffsetDateTime> from, Optional<OffsetDateTime> to,
-                            long numberOfRequests, long averageResponseSizeInBytes, Map<String, Long> numberOfCertainResources,
+                            long numberOfRequests, long averageResponseSizeInBytes,
+                            Map<String, Long> numberOfCertainResources,
                             Map<ResponseCode, Long> responseCodes) {
 
 }
