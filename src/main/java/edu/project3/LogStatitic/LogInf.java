@@ -1,4 +1,4 @@
-package edu.project3;
+package edu.project3.LogStatitic;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;

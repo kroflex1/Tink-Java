@@ -1,7 +1,7 @@
 package edu.project3.LogStatisticsDisplay;
 
-import edu.project3.LogStatistics;
-import edu.project3.ResponseCode;
+import edu.project3.LogStatitic.LogStatistics;
+import edu.project3.LogStatitic.ResponseCode;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,11 +10,6 @@ import net.steppschuh.markdowngenerator.table.Table;
 
 public class LogStatisticsMarkdown implements LogStatisticsDisplay {
     private static final int DEFAULT_TOP = 3;
-
-    @Override
-    public void print(LogStatistics logStatistics) {
-        print(logStatistics, DEFAULT_TOP);
-    }
 
     @SuppressWarnings("RegexpSinglelineJava")
     public String getStatisticsDisplay(LogStatistics logStatistics, int numberOfTop) {
@@ -31,6 +26,11 @@ public class LogStatisticsMarkdown implements LogStatisticsDisplay {
         result.append(getResponseCodes(logStatistics).toString());
         result.append("\n");
         return result.toString();
+    }
+
+    @SuppressWarnings("RegexpSinglelineJava")
+    public String getStatisticsDisplay(LogStatistics logStatistics) {
+        return getStatisticsDisplay(logStatistics, DEFAULT_TOP);
     }
 
     private Table getGeneralInformation(LogStatistics logStatistics) {

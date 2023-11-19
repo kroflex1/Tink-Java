@@ -1,6 +1,9 @@
 package edu.project3;
 
-import edu.project3.LogStatisticsDisplay.LogStatisticsMarkdown;
+import edu.project3.LogStatitic.LogInf;
+import edu.project3.LogStatitic.LogStatistics;
+import edu.project3.LogStatitic.LogStatisticsManager;
+import edu.project3.LogStatitic.ResponseCode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -8,7 +11,6 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;

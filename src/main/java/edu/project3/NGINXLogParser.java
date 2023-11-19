@@ -1,5 +1,6 @@
 package edu.project3;
 
+import edu.project3.LogStatitic.LogInf;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
