@@ -19,11 +19,12 @@ public class NGINXLogParserTest {
         String firstLog =
             "93.180.71.3 - - [17/May/2015:08:05:32 +0000] \"GET /downloads/product_1 HTTP/1.1\" 304 0 \"-\" \"Debian APT-HTTP/1.3 (0.8.16~exp12ubuntu10.21)\"";
         OffsetDateTime firstTime = convertToTime("17/May/2015:08:05:32", ZoneOffset.of("+00:00"));
-        LogRecord firstExcept = new LogRecord(
+        LogInf firstExcept = new LogInf(
             "93.180.71.3",
             Optional.empty(),
             firstTime,
             "GET /downloads/product_1 HTTP/1.1",
+            "product_1",
             304,
             0,
             Optional.empty(),
@@ -31,13 +32,14 @@ public class NGINXLogParserTest {
         );
 
         String secondLog =
-            "216.46.173.126 - - [26/May/2015:19:05:02 +0200] \"GET /downloads/product_1 HTTP/1.1\" 404 331 \"-\" \"Debian APT-HTTP/1.3 (0.8.16~exp12ubuntu10.22)\"";
+            "216.46.173.126 - - [26/May/2015:19:05:02 +0200] \"GET /index.html HTTP/1.1\" 404 331 \"-\" \"Debian APT-HTTP/1.3 (0.8.16~exp12ubuntu10.22)\"";
         OffsetDateTime secondTime = convertToTime("26/May/2015:19:05:02", ZoneOffset.of("+02:00"));
-        LogRecord secondExcept = new LogRecord(
+        LogInf secondExcept = new LogInf(
             "216.46.173.126",
             Optional.empty(),
             secondTime,
-            "GET /downloads/product_1 HTTP/1.1",
+            "GET /index.html HTTP/1.1",
+            "index.html",
             404,
             331,
             Optional.empty(),
@@ -45,13 +47,14 @@ public class NGINXLogParserTest {
         );
 
         String thirdLog =
-            "78.109.87.141 - Kroflex [26/May/2015:22:05:46 +0245] \"GET /downloads/product_2 HTTP/1.1\" 404 336 \"-\" \"Debian APT-HTTP/1.3 (0.9.7.9)\"";
+            "78.109.87.141 - Kroflex [26/May/2015:22:05:46 +0245] \"GET /downloads/games/minecraft HTTP/1.1\" 404 336 \"-\" \"Debian APT-HTTP/1.3 (0.9.7.9)\"";
         OffsetDateTime thirdTime = convertToTime("26/May/2015:22:05:46", ZoneOffset.of("+02:45"));
-        LogRecord thirdExcept = new LogRecord(
+        LogInf thirdExcept = new LogInf(
             "78.109.87.141",
             Optional.of("Kroflex"),
             thirdTime,
-            "GET /downloads/product_2 HTTP/1.1",
+            "GET /downloads/games/minecraft HTTP/1.1",
+            "minecraft",
             404,
             336,
             Optional.empty(),
@@ -83,15 +86,15 @@ public class NGINXLogParserTest {
 
     @ParameterizedTest
     @MethodSource("logs")
-    void testNGINXLogParser(String log, LogRecord except) {
-        LogRecord result = NGINXLogParser.convertToLogInformation(log).get();
+    void testNGINXLogParser(String log, LogInf except) {
+        LogInf result = NGINXLogParser.convertToLogInformation(log).get();
         assertEquals(result, except);
     }
 
     @ParameterizedTest
     @MethodSource("invalidLogs")
     void testTryParseInvalidLogs(String invalidLog) {
-        Optional<LogRecord> result = NGINXLogParser.convertToLogInformation(invalidLog);
+        Optional<LogInf> result = NGINXLogParser.convertToLogInformation(invalidLog);
         assertTrue(result.isEmpty());
     }
 
