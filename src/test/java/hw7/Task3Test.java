@@ -102,12 +102,11 @@ public class Task3Test {
         ExecutorService service = Executors.newFixedThreadPool(4);
         service.submit(() -> database.add(person));
         CompletableFuture<List<Person>> futurePeopleByName =
-            CompletableFuture.supplyAsync(() -> database.findByName(person.name()));
+            CompletableFuture.supplyAsync(() -> database.findByName(person.name()), service);
         CompletableFuture<List<Person>> futurePeopleByPhone =
-            CompletableFuture.supplyAsync(() -> database.findByPhone(person.phoneNumber()));
+            CompletableFuture.supplyAsync(() -> database.findByPhone(person.phoneNumber()), service);
         CompletableFuture<List<Person>> futurePeopleByAddress =
-            CompletableFuture.supplyAsync(() -> database.findByAddress(person.address()));
-
+            CompletableFuture.supplyAsync(() -> database.findByAddress(person.address()), service);
         try {
             assertEquals(person, futurePeopleByName.get().get(0));
             assertEquals(person, futurePeopleByPhone.get().get(0));
@@ -115,6 +114,7 @@ public class Task3Test {
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     @ParameterizedTest
@@ -122,14 +122,14 @@ public class Task3Test {
     void testRemoveAndGetPersonWithConcurrency(PersonDatabase database) {
         Person person = new Person(1, "Vova", "Moscow", "+7123");
         database.add(person);
-        Thread threadToRemove = new Thread(() -> database.delete(person.id()));
-        threadToRemove.start();
+        ExecutorService service = Executors.newFixedThreadPool(4);
+        service.submit(() -> database.delete(person.id()));
         CompletableFuture<List<Person>> futurePeopleByName =
-            CompletableFuture.supplyAsync(() -> database.findByName(person.name()));
+            CompletableFuture.supplyAsync(() -> database.findByName(person.name()), service);
         CompletableFuture<List<Person>> futurePeopleByPhone =
-            CompletableFuture.supplyAsync(() -> database.findByPhone(person.phoneNumber()));
+            CompletableFuture.supplyAsync(() -> database.findByPhone(person.phoneNumber()), service);
         CompletableFuture<List<Person>> futurePeopleByAddress =
-            CompletableFuture.supplyAsync(() -> database.findByAddress(person.address()));
+            CompletableFuture.supplyAsync(() -> database.findByAddress(person.address()), service);
         try {
             assertTrue(futurePeopleByName.get().isEmpty());
             assertTrue(futurePeopleByPhone.get().isEmpty());
