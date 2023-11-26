@@ -1,4 +1,4 @@
-package hw7;
+package edu.hw7;
 
 import edu.hw7.Task1.Counter;
 import edu.hw7.Task1.CounterManager;

@@ -59,6 +59,7 @@ public abstract class InMemoryPersonDatabase implements PersonDatabase {
         return new ArrayList<>(peopleByPhone.getOrDefault(phone, new HashSet<>()));
     }
 
+    @SuppressWarnings({"MagicNumber", "ParameterAssignment"})
     private int getReverseId(int id) {
         int reverseId = 0;
         while (id != 0) {

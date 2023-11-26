@@ -1,4 +1,4 @@
-package hw7;
+package edu.hw7;
 
 import edu.hw7.Task2;
 import java.math.BigInteger;
