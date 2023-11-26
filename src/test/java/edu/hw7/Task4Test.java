@@ -2,15 +2,14 @@ package edu.hw7;
 
 import edu.hw7.Task4.MultiThreadedPiFinder;
 import edu.hw7.Task4.SingleThreadedPiFinder;
-import java.util.stream.Stream;
 import edu.hw7.Task4.StatisticsManager;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class Task4Test {
@@ -58,8 +57,7 @@ public class Task4Test {
 
     @Test
     void testStatistic(){
-        StatisticsManager statisticsManager = new StatisticsManager();
-        String result = statisticsManager.getStatistics(4);
+        String result = StatisticsManager.getStatistics(4);
         System.out.print(result);
         assertFalse(result.isEmpty());
     }
