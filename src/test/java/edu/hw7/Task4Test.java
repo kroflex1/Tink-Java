@@ -1,36 +1,66 @@
 package edu.hw7;
 
-import edu.hw7.Task3.ReadWriteLockPersonDatabase;
-import edu.hw7.Task3.SynchronizedPersonDatabase;
 import edu.hw7.Task4.MultiThreadedPiFinder;
-import edu.hw7.Task4.PiFinder;
 import edu.hw7.Task4.SingleThreadedPiFinder;
+import java.util.stream.Stream;
+import edu.hw7.Task4.StatisticsManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import java.util.List;
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Task4Test {
     private static final double EPSILON = 0.2d;
 
-    static Stream<Arguments> piFinders() {
+    static Stream<Arguments> singleThreadPiFinder() {
         return Stream.of(
             arguments(new SingleThreadedPiFinder(), 10_000),
             arguments(new SingleThreadedPiFinder(), 10_000_000),
-            arguments(new MultiThreadedPiFinder(), 10_000),
-            arguments(new MultiThreadedPiFinder(), 10_000_000)
+            arguments(new SingleThreadedPiFinder(), 50_000_000),
+            arguments(new SingleThreadedPiFinder(), 100_000_000)
+        );
+    }
+
+    static Stream<Arguments> multiThreadPiFinder() {
+        return Stream.of(
+            arguments(new MultiThreadedPiFinder(), 10_000, 2),
+            arguments(new MultiThreadedPiFinder(), 10_000_000, 2),
+            arguments(new MultiThreadedPiFinder(), 50_000_000, 2),
+            arguments(new MultiThreadedPiFinder(), 100_000_000, 2),
+            arguments(new MultiThreadedPiFinder(), 10_000, 3),
+            arguments(new MultiThreadedPiFinder(), 10_000_000, 3),
+            arguments(new MultiThreadedPiFinder(), 50_000_000, 3),
+            arguments(new MultiThreadedPiFinder(), 100_000_000, 3),
+            arguments(new MultiThreadedPiFinder(), 10_000, 4),
+            arguments(new MultiThreadedPiFinder(), 10_000_000, 4),
+            arguments(new MultiThreadedPiFinder(), 50_000_000, 4),
+            arguments(new MultiThreadedPiFinder(), 100_000_000, 4)
         );
     }
 
     @ParameterizedTest
-    @MethodSource("piFinders")
-    void testPiDelta(PiFinder piFinder, int iterations) {
+    @MethodSource("singleThreadPiFinder")
+    void testSingleThreadPiDelta(SingleThreadedPiFinder piFinder, int iterations) {
         double resultPi = piFinder.findPi(iterations);
         assertEquals(Math.PI, resultPi, EPSILON);
+    }
+
+    @ParameterizedTest
+    @MethodSource("multiThreadPiFinder")
+    void testMultiThreadPiDelta(MultiThreadedPiFinder piFinder, int iterations, int threads) {
+        double resultPi = piFinder.findPi(iterations);
+        assertEquals(Math.PI, resultPi, EPSILON);
+    }
+
+    @Test
+    void testStatistic(){
+        StatisticsManager statisticsManager = new StatisticsManager();
+        String result = statisticsManager.getStatistics(4);
+        System.out.print(result);
+        assertFalse(result.isEmpty());
     }
 }

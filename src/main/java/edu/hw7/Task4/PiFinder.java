@@ -7,7 +7,7 @@ public abstract class PiFinder {
     public abstract double findPi(int numberOfIterations);
 
     protected double getDistanceBetweenTwoPoints(Point firstPoint, Point secondPoint) {
-        return Math.sqrt(Math.pow(firstPoint.x() - secondPoint.x(), 2) +
-            Math.pow(firstPoint.y() - secondPoint.y(), 2));
+        return Math.sqrt(Math.pow(firstPoint.x() - secondPoint.x(), 2)
+            + Math.pow(firstPoint.y() - secondPoint.y(), 2));
     }
 }

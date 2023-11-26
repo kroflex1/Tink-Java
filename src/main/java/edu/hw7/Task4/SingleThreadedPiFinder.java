@@ -3,6 +3,7 @@ package edu.hw7.Task4;
 public class SingleThreadedPiFinder extends PiFinder {
 
     @Override
+    @SuppressWarnings("MagicNumber")
     public double findPi(int numberOfIterations) {
         int totalCount = numberOfIterations;
         int circleCount = 0;
