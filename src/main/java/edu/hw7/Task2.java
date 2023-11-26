@@ -15,7 +15,7 @@ public class Task2 {
             .reduce(BigInteger.valueOf(1L), (a, b) -> a.multiply(b));
     }
 
-    private Task2(){
+    private Task2() {
 
     }
 }
