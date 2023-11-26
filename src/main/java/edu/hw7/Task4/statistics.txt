@@ -1,0 +1,17 @@
+Number of iterations: 10000000
+Single-threaded PI: 3.1420176
+Single-threaded Time: 0.5067254s
+Multi-threaded PI: 3.1417976
+Multi-threaded Time: 0.1764115s
+
+Number of iterations: 100000000
+Single-threaded PI: 3.14150816
+Single-threaded Time: 4.8476468s
+Multi-threaded PI: 3.14197156
+Multi-threaded Time: 0.9608339s
+
+Number of iterations: 1000000000
+Single-threaded PI: 3.141632556
+Single-threaded Time: 48.2686611s
+Multi-threaded PI: 3.14161722
+Multi-threaded Time: 8.6631048s
