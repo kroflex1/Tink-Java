@@ -12,20 +12,19 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Task1Test {
     static final int MAX_NUMBER_OF_CONNECTIONS = 3;
-    Server server;
-    ExecutorService executorService;
+    static Server server;
+    static ExecutorService executorService;
 
-    @BeforeEach
-    void startServer() {
-        executorService = Executors.newSingleThreadExecutor();
+    @BeforeAll
+    static void startServer() {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.execute(() -> {
             try {
                 server = new Server("127.0.0.1", 5555);
@@ -36,25 +35,19 @@ public class Task1Test {
         });
     }
 
-    @AfterEach
-    void stopServer() throws IOException {
-        server.stop();
-        executorService.shutdown();
-    }
-
     @Test
-    void clientGetRespondFromServer() throws IOException {
+    void clientGetRespondFromServer() {
         Client client = new Client();
-        client.startConnection(server.IP, server.PORT);
+        client.startConnection(server.ip, server.port);
         String response = client.sendMessage("личности");
         assertEquals("Не переходи на личности там, где их нет", response);
         client.stopConnection();
     }
 
     @Test
-    void clientSendManyMessagesGetRespondFromServer() throws IOException {
+    void clientSendManyMessagesToServer() {
         Client client = new Client();
-        client.startConnection(server.IP, server.PORT);
+        client.startConnection(server.ip, server.port);
         assertEquals("Не переходи на личности там, где их нет", client.sendMessage("личности"));
         assertEquals(
             "Если твои противники перешли на личные оскорбления, будь уверена — твоя победа не за горами",
@@ -64,13 +57,13 @@ public class Task1Test {
     }
 
     @Test
-    void manyClientsGetRespondFromServer() throws IOException {
+    void manyClientsGetRespondFromServer() {
         Client firstClient = new Client();
         Client secondClient = new Client();
         Client thirdClient = new Client();
-        firstClient.startConnection(server.IP, server.PORT);
-        secondClient.startConnection(server.IP, server.PORT);
-        thirdClient.startConnection(server.IP, server.PORT);
+        firstClient.startConnection(server.ip, server.port);
+        secondClient.startConnection(server.ip, server.port);
+        thirdClient.startConnection(server.ip, server.port);
         assertEquals("Не переходи на личности там, где их нет", firstClient.sendMessage("личности"));
         assertEquals(
             "Если твои противники перешли на личные оскорбления, будь уверена — твоя победа не за горами",
@@ -86,29 +79,28 @@ public class Task1Test {
     }
 
     @Test
-    void moreThanMaxClientsTryGetRespondFromServer() throws InterruptedException, ExecutionException {
+    void moreThanMaxClientsTryGetRespondFromServer() throws InterruptedException, ExecutionException, TimeoutException {
         ExecutorService executorService = Executors.newFixedThreadPool(MAX_NUMBER_OF_CONNECTIONS + 1);
-        int secondsToSleep = 2;
+        int secondsToSleep = 5;
         Callable<Void> clientConnectToServer = () -> {
             var client = new Client();
-            client.startConnection(server.IP, server.PORT);
+            client.startConnection(server.ip, server.port);
             TimeUnit.SECONDS.sleep(secondsToSleep);
             client.stopConnection();
             return null;
         };
         List<Callable<Void>> tasks =
             Stream.generate(() -> clientConnectToServer).limit(MAX_NUMBER_OF_CONNECTIONS).toList();
-        executorService.invokeAll(tasks);
+        tasks.forEach(executorService::submit);
 
         CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
             Client client = new Client();
-            client.startConnection(server.IP, server.PORT);
+            client.startConnection(server.ip, server.port);
             String response = client.sendMessage("личности");
-            client.stopConnection();
             return response;
         }, executorService);
+
         assertThrows(TimeoutException.class, () ->
             future.get(secondsToSleep - 1, TimeUnit.SECONDS));
-
     }
 }

@@ -12,31 +12,36 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Server {
-    public final int PORT;
-    public final String IP;
+    public final int port;
+    public final String ip;
+    private AtomicBoolean isON;
     private final Map<String, List<String>> answersForClient;
     private ServerSocket serverSocket;
     private ExecutorService executor;
 
     public Server(String ip, int port) {
-        PORT = port;
-        IP = ip;
+        this.port = port;
+        this.ip = ip;
+        isON = new AtomicBoolean();
         answersForClient = getAnswersForClient();
     }
 
     public void start(int maxNumberOfConnections) throws IOException {
-        serverSocket = new ServerSocket(PORT);
+        isON.set(true);
+        serverSocket = new ServerSocket(port);
         executor = Executors.newFixedThreadPool(maxNumberOfConnections);
-        while (true) {
+        while (isON.get()) {
             executor.execute(new EchoClientHandler(serverSocket.accept(), answersForClient));
         }
     }
 
     public void stop() throws IOException {
-        serverSocket.close();
+        isON.set(false);
         executor.shutdown();
+        serverSocket.close();
     }
 
     private Map<String, List<String>> getAnswersForClient() {
@@ -61,7 +66,7 @@ public class Server {
         private BufferedReader in;
         private final Map<String, List<String>> answersForClient;
 
-        public EchoClientHandler(Socket socket, Map<String, List<String>> answersForClient) {
+        EchoClientHandler(Socket socket, Map<String, List<String>> answersForClient) {
             this.clientSocket = socket;
             this.answersForClient = answersForClient;
         }
@@ -71,12 +76,16 @@ public class Server {
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
                 in = new BufferedReader(
                     new InputStreamReader(clientSocket.getInputStream()));
-                String inputLine;
-                while (!(inputLine = in.readLine()).equals("exit") ) {
+                while (true) {
+                    String inputLine = in.readLine();
+                    if (inputLine.equals("exit")) {
+                        break;
+                    }
                     if (!answersForClient.containsKey(inputLine)) {
                         out.println("");
                     } else {
-                        int randomIndex = ThreadLocalRandom.current().nextInt(0, answersForClient.get(inputLine).size());
+                        int randomIndex =
+                            ThreadLocalRandom.current().nextInt(0, answersForClient.get(inputLine).size());
                         out.println(answersForClient.get(inputLine).get(randomIndex));
                     }
                 }
@@ -88,5 +97,4 @@ public class Server {
             }
         }
     }
-
 }
