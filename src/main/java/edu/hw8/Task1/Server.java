@@ -12,12 +12,10 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Server {
     public final int PORT;
     public final String IP;
-
     private final Map<String, List<String>> answersForClient;
     private ServerSocket serverSocket;
     private ExecutorService executor;
@@ -73,12 +71,14 @@ public class Server {
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
                 in = new BufferedReader(
                     new InputStreamReader(clientSocket.getInputStream()));
-                String topic = in.readLine();
-                if (!answersForClient.containsKey(topic)) {
-                    out.println("");
-                } else {
-                    int randomIndex = ThreadLocalRandom.current().nextInt(0, answersForClient.get(topic).size());
-                    out.println(answersForClient.get(topic).get(randomIndex));
+                String inputLine;
+                while (!(inputLine = in.readLine()).equals("exit") ) {
+                    if (!answersForClient.containsKey(inputLine)) {
+                        out.println("");
+                    } else {
+                        int randomIndex = ThreadLocalRandom.current().nextInt(0, answersForClient.get(inputLine).size());
+                        out.println(answersForClient.get(inputLine).get(randomIndex));
+                    }
                 }
                 in.close();
                 out.close();
