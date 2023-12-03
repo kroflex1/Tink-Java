@@ -1,0 +1,14 @@
+Max password size = 4
+Number of threads = 4
+
+Password: tR7L
+multi-thread password decryptor : 3 sec 420 ms
+single-thread password decryptor : 10 sec 259 ms
+Result: 2.99 times faster
+
+Passwords: a, v, cba, 4Yne
+single-thread password decryptor : 5 sec 43s ms
+multi-thread password decryptor : 10 sec 681 ms
+Result: 1,96 times faster
+
+Result: on average, it is faster in 2.475
