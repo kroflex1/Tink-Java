@@ -12,14 +12,13 @@ import org.jetbrains.annotations.Nullable;
 
 public class PrimaGenerator implements Generator {
 
-    private Set<Coordinate> anchorPoints;
     private Maze maze;
 
     @Override
     public Maze generate(int width, int height) {
         maze = new Maze(height, width);
         Coordinate startPoint = chooseRandomStartCoordinate(height, width);
-        anchorPoints = new HashSet<>();
+        Set<Coordinate> anchorPoints = new HashSet<>();
         anchorPoints.add(startPoint);
 
         while (!anchorPoints.isEmpty()) {
