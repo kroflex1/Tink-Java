@@ -9,6 +9,7 @@ public class Task5Test {
     static Arguments[] carLicensePlates() {
         return new Arguments[] {
             Arguments.of("А123ВЕ777", true),
+            Arguments.of("А123ВЕ77", true),
             Arguments.of("О777ОО177", true),
             Arguments.of("123АВЕ777", false),
             Arguments.of("А123ВГA123", false),

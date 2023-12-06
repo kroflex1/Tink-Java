@@ -6,14 +6,14 @@ import java.time.format.DateTimeParseException;
 import org.jetbrains.annotations.Nullable;
 
 class FirstDateParser implements DateParser {
+    private static final DateTimeFormatter FORMATTER =  DateTimeFormatter.ofPattern("yyyy-MM-d");
 
     @Override
     @Nullable
     public LocalDate parseDate(String date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d");
         LocalDate result;
         try {
-            result = LocalDate.parse(date, formatter);
+            result = LocalDate.parse(date, FORMATTER);
         } catch (DateTimeParseException e) {
             result = null;
         }

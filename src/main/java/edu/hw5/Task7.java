@@ -13,15 +13,12 @@ public class Task7 {
 
     @SuppressWarnings("MagicNumber")
     public static boolean solve2(String word) {
-        Pattern pattern = Pattern.compile("(([01])[01]*([01]))|([01])");
+        Pattern pattern = Pattern.compile("(1([01]*1)?)|(0([01]*0)?)");
         Matcher matcher = pattern.matcher(word);
-        return matcher.matches() && (matcher.group(4) != null || matcher.group(2).equals(matcher.group(3)));
+        return matcher.matches();
     }
 
     public static boolean solve3(String word) {
-        if (word.isEmpty()) {
-            return false;
-        }
         Pattern pattern = Pattern.compile("[01]{1,3}");
         Matcher matcher = pattern.matcher(word);
         return matcher.matches();

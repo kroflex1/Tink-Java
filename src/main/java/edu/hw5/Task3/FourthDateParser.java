@@ -5,10 +5,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class FourthDateParser implements DateParser {
+    private static final Pattern DATE_PATTERN = Pattern.compile("^(\\d+) day(s)? ago$");
+
     @Override
     public LocalDate parseDate(String date) {
-        Pattern pattern = Pattern.compile("^(\\d+) day(s)? ago$");
-        Matcher matcher = pattern.matcher(date);
+        Matcher matcher = DATE_PATTERN.matcher(date);
         if (matcher.matches()) {
             long days = Long.parseLong(matcher.group(1));
             if (days <= 0) {

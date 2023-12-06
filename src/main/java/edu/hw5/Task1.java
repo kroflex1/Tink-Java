@@ -6,9 +6,15 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Task1 {
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd, HH:mm");
+
     public static String getAverageTime(List<String> timeIntervals) throws IllegalArgumentException {
+        if (timeIntervals.isEmpty()) {
+            throw new IllegalArgumentException("The list of time intervals cannot be empty");
+        }
         long sumOfSeconds = 0;
         for (String currentTimeInterval : timeIntervals) {
             String[] times = currentTimeInterval.strip().split(" - ");
@@ -19,12 +25,11 @@ public class Task1 {
                     times.length
                 ));
             }
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd, HH:mm");
             LocalDateTime start;
             LocalDateTime end;
             try {
-                start = LocalDateTime.parse(times[0], formatter);
-                end = LocalDateTime.parse(times[1], formatter);
+                start = LocalDateTime.parse(times[0], FORMATTER);
+                end = LocalDateTime.parse(times[1], FORMATTER);
             } catch (DateTimeParseException e) {
                 throw new IllegalArgumentException("Invalid time format");
             }
@@ -39,9 +44,11 @@ public class Task1 {
 
     @SuppressWarnings("MagicNumber")
     private static String convertSecondsToDuration(long seconds) {
-        long days = seconds / (24 * 60 * 60);
-        long hours = seconds / (60 * 60) - 24 * days;
-        long minutes = seconds / 60 - hours * 60 - days * 24 * 60;
+        long days = TimeUnit.DAYS.convert(seconds, TimeUnit.SECONDS);
+        long hours = TimeUnit.HOURS.convert(seconds, TimeUnit.SECONDS) - TimeUnit.HOURS.convert(days, TimeUnit.DAYS);
+        long minutes =
+            TimeUnit.MINUTES.convert(seconds, TimeUnit.SECONDS) - TimeUnit.MINUTES.convert(hours, TimeUnit.HOURS)
+                - TimeUnit.MINUTES.convert(days, TimeUnit.DAYS);
         List<String> result = new ArrayList<>();
         if (days != 0) {
             result.add(days + "д");

@@ -53,21 +53,7 @@ public class Task8Test {
     }
 
     @ParameterizedTest
-    @CsvSource(value = {"101", "10101", "1000000100001", "000", "1", "0", "111111"})
-    @DisplayName("Строка соответствует условию: любая строка, кроме 11 или 111")
-    void testMatchSolve4(String word) {
-        assertTrue(Task8.solve4(word));
-    }
-
-    @ParameterizedTest
-    @CsvSource(value = {"11", "111", "abc10", "10abc", "abc101abc"})
-    @DisplayName("Строка НЕ соответствует условию: любая строка, кроме 11 или 111")
-    void testCantMatchSolve4(String word) {
-        assertFalse(Task8.solve4(word));
-    }
-
-    @ParameterizedTest
-    @CsvSource(value = {"10000", "010", "001", "000000100000", "000000001", "100000"})
+    @CsvSource(value = {"10000", "010", "001", "000000100000", "000000001", "100000", "0000"})
     @DisplayName("Строка соответствует условию: содержит не менее двух 0 и не более одной 1")
     void testMatchSolve6(String word) {
         assertTrue(Task8.solve6(word));

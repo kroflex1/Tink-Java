@@ -2,8 +2,10 @@ package edu.hw5;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -84,6 +86,14 @@ public class Task1Test {
     @MethodSource("invalidIntervals")
     @DisplayName("Неверный формат времени")
     void testInvalidIntervals(List<String> intervals) {
+        assertThrows(IllegalArgumentException.class, () ->
+            Task1.getAverageTime(intervals));
+    }
+
+    @Test
+    @DisplayName("Пустой список интервалов")
+    void testInvalidIntervals() {
+        List<String> intervals = new ArrayList<>();
         assertThrows(IllegalArgumentException.class, () ->
             Task1.getAverageTime(intervals));
     }

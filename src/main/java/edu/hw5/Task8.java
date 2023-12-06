@@ -26,29 +26,19 @@ public class Task8 {
         return matcher.matches();
     }
 
-    //Любая строка, кроме 11 или 111
-    public static boolean solve4(String word) {
-        Pattern badPattern = Pattern.compile("1{2,3}");
-        Matcher badMatcher = badPattern.matcher(word);
-        Pattern pattern = Pattern.compile("[01]+");
-        Matcher matcher = pattern.matcher(word);
-        return !badMatcher.matches() && matcher.matches();
-    }
 
     //Содержит не менее двух 0 и не более одной 1
     public static boolean solve6(String word) {
-        Pattern pattern = Pattern.compile("(10{2,})|(0+10+)|(0{2,}1)");
+        Pattern pattern = Pattern.compile("(10{2,})|(0+10+)|(0{2,}1)|(0{2,})");
         Matcher matcher = pattern.matcher(word);
         return matcher.matches();
     }
 
     //нет последовательных 1
     public static boolean solve7(String word) {
-        Pattern badPattern = Pattern.compile("11");
-        Matcher badMatcher = badPattern.matcher(word);
-        Pattern goodPattern = Pattern.compile("[01]*");
-        Matcher goodMatcher = goodPattern.matcher(word);
-        return goodMatcher.matches() && !badMatcher.find();
+        Pattern pattern = Pattern.compile("1?(0+1?)*");
+        Matcher matcher = pattern.matcher(word);
+        return matcher.matches();
     }
 
     private Task8() {

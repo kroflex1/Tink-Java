@@ -14,13 +14,11 @@ public class Task2 {
 
     public static List<String> getAllFridays13th(int year) {
         List<String> result = new ArrayList<>();
-        int currentMonth = 1;
-        while (currentMonth <= MONTHS_PER_YEAR) {
+        for (int currentMonth = 1; currentMonth <= MONTHS_PER_YEAR; ++currentMonth) {
             LocalDate currentDate = LocalDate.of(year, currentMonth, NUMBER_OF_TERRIFYING_FRIDAY);
             if (currentDate.getDayOfWeek() == DayOfWeek.FRIDAY) {
                 result.add(currentDate.format(FORMATTER));
             }
-            ++currentMonth;
         }
         return result;
     }
