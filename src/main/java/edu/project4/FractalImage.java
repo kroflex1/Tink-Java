@@ -19,7 +19,7 @@ public record FractalImage(Pixel[][] data, int width, int height) {
     }
 
     public Pixel pixel(int x, int y) {
-        return new Pixel(0, 0, 0, 0);
+        return data[y][x];
     }
 
 }
