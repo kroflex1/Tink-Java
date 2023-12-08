@@ -2,16 +2,13 @@ package edu.project4.Transformations;
 
 import edu.project4.Point;
 
-public class Waves extends Transformation {
-    public Waves(Coefficients coefficients) {
-        super(coefficients);
-    }
+public class Waves implements Transformation {
 
     @Override
-    public Point apply(Point point) {
+    public Point apply(Point point, Coefficients coefficients) {
         return new Point(
-            point.x() + coeff.b() * Math.sin(point.y()) / Math.pow(coeff.c(), 2),
-            point.y() + coeff.e() * Math.sin(point.x()) / Math.pow(coeff.f(), 2)
+            point.x() + coefficients.b() * Math.sin(point.y()) / Math.pow(coefficients.c(), 2),
+            point.y() + coefficients.e() * Math.sin(point.x()) / Math.pow(coefficients.f(), 2)
         );
     }
 }

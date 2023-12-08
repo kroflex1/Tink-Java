@@ -1,13 +1,10 @@
 package edu.project4.Transformations;
 
 import edu.project4.Point;
+import java.util.function.Function;
 
-public abstract class Transformation {
-    protected final Coefficients coeff;
+public interface Transformation{
 
-    public Transformation(Coefficients coefficients) {
-        coeff = coefficients;
-    }
+    public Point apply(Point point, Coefficients coefficients);
 
-    public abstract Point apply(Point point);
 }
