@@ -3,6 +3,11 @@ package edu.project4.Records;
 import java.awt.Color;
 
 public record Pixel(Color color, int hitCount) {
+
+    public Pixel(Color color) {
+        this(color, 0);
+    }
+
     public static Pixel Black() {
         return new Pixel(Color.BLACK, 0);
     }
@@ -12,8 +17,10 @@ public record Pixel(Color color, int hitCount) {
     }
 
     public Pixel setNewColor(Color newColor) {
-        return new Pixel(newColor, hitCount);
+        return new Pixel(newColor);
     }
+
+
 
     public Pixel mixWithAnotherColor(Color otherColor) {
         Color mixedColor = new Color(
