@@ -14,12 +14,16 @@ public record FractalImage(Pixel[][] data, int width, int height) {
         return new FractalImage(pixels, width, height);
     }
 
-    public boolean contains(int x, int y) {
-        return true;
+    public Pixel getPixel(int x, int y) {
+        return data[y][x];
     }
 
-    public Pixel pixel(int x, int y) {
-        return data[y][x];
+    public void changePixelColor(int x, int y, int red, int green, int blue) {
+        data[y][x] = data[y][x].setNewColor(red, green, blue);
+    }
+
+    public void increasePixelHitCount(int x, int y) {
+        data[y][x] = data[y][x].increaseHitCount();
     }
 
 }
