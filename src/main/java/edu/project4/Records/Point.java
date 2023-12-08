@@ -1,4 +1,4 @@
-package edu.project4;
+package edu.project4.Records;
 
 public record Point(double x, double y) {
     public boolean isBelongsToSegmentX(double start, double end) {

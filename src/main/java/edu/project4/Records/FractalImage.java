@@ -1,4 +1,6 @@
-package edu.project4;
+package edu.project4.Records;
+
+import java.awt.Color;
 
 public record FractalImage(Pixel[][] data, int width, int height) {
     public static FractalImage createEmptyFractalImage(int width, int height) {
@@ -15,8 +17,8 @@ public record FractalImage(Pixel[][] data, int width, int height) {
         return data[y][x];
     }
 
-    public void changePixelColor(int x, int y, int red, int green, int blue) {
-        data[y][x] = data[y][x].setNewColor(red, green, blue);
+    public void setPixel(int x, int y, Pixel newPixel) {
+        data[y][x] = newPixel;
     }
 
     public void increasePixelHitCount(int x, int y) {

@@ -1,12 +1,14 @@
 package edu.project4;
 
+import edu.project4.Records.FractalImage;
+import edu.project4.Records.Pixel;
+import edu.project4.Records.Point;
+import edu.project4.Records.Rect;
 import edu.project4.Transformations.Affine;
-import edu.project4.Transformations.Coefficients;
+import edu.project4.Records.Coefficients;
 import edu.project4.Transformations.Transformation;
-import javax.xml.crypto.dsig.TransformService;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import static java.lang.Math.random;
 
 public class Renderer {
     private final double MIN_X = -1.777;
@@ -40,14 +42,11 @@ public class Renderer {
                     if (world.contains(new Point(x, y))) {
                         Pixel currentPixel = canvas.getPixel(x, y);
                         if (currentPixel.hitCount() == 0) {
-                            canvas.changePixelColor(x, y, currentCoeff.red(), currentCoeff.green(), currentCoeff.blue()
-                            );
+                            currentPixel = currentPixel.setNewColor(currentCoeff.color());
                         } else {
-                            int newRed = (canvas.getPixel(x, y).r() + currentCoeff.red()) / 2;
-                            int newGreen = (canvas.getPixel(x, y).g() + currentCoeff.green()) / 2;
-                            int newBlue = (canvas.getPixel(x, y).b() + currentCoeff.blue()) / 2;
-                            canvas.changePixelColor(x, y, newRed, newGreen, newBlue);
+                            currentPixel = currentPixel.mixWithAnotherColor(currentCoeff.color());
                         }
+                        canvas.setPixel(x, y, currentPixel);
                         canvas.increasePixelHitCount(x, y);
                     }
                 }

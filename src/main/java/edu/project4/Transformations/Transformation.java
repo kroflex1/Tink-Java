@@ -1,7 +1,7 @@
 package edu.project4.Transformations;
 
-import edu.project4.Point;
-import java.util.function.Function;
+import edu.project4.Records.Coefficients;
+import edu.project4.Records.Point;
 
 public interface Transformation{
 

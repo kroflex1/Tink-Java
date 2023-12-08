@@ -1,5 +1,6 @@
-package edu.project4;
+package edu.project4.Records;
 
+import edu.project4.Records.Point;
 import java.util.concurrent.ThreadLocalRandom;
 
 public record Rect(double x, double y, double width, double height) {

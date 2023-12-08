@@ -1,10 +1,9 @@
 package edu.project4.Image;
 
-import edu.project4.FractalImage;
+import edu.project4.Records.FractalImage;
 import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,12 +15,7 @@ public class ImageUtils {
 
         for (int y = 0; y < image.height(); ++y) {
             for (int x = 0; x < image.width(); ++x) {
-                int alpha = 255;
-                int red = image.getPixel(x, y).r();
-                int green = image.getPixel(x, y).g();
-                int blue = image.getPixel(x, y).b();
-                Color color = new Color(red, green, blue, alpha);
-                bufferedImage.setRGB(x, y, color.getRGB());
+                bufferedImage.setRGB(x, y, image.getPixel(x,y).color().getRGB());
             }
         }
         try {
