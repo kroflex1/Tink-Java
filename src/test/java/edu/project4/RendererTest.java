@@ -7,21 +7,25 @@ import edu.project4.ImageProcessor.ImageProcessor;
 import edu.project4.Records.FractalImage;
 import edu.project4.Records.Rect;
 import edu.project4.Records.Coefficients;
+import edu.project4.Render.MultiRenderer;
+import edu.project4.Render.Renderer;
+import edu.project4.Render.SingleRenderer;
 import edu.project4.Transformations.Diemond;
+import edu.project4.Transformations.Popcorn;
 import edu.project4.Transformations.Sinusoidal;
-import edu.project4.Transformations.Swirl;
-import edu.project4.Transformations.Transformation;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
-public class RenderTest {
-
-    @Test
-    void test() {
+public class RendererTest {
+    @ParameterizedTest
+    @MethodSource("renderers")
+    void testRenderer(Renderer renderer) {
         Rect rect = new Rect(0, 0, 1920, 1080);
-
-        Renderer renderer = new Renderer();
         FractalImage canvas = FractalImage.createEmptyFractalImage(1920, 1080);
         FractalImage result =
             renderer.render(
@@ -34,14 +38,21 @@ public class RenderTest {
                     Coefficients.createRandomCoefficients(),
                     Coefficients.createRandomCoefficients()
                 ),
-                List.of(new Diemond()
-                ),
-                20000,
-                (short) 4000
+                List.of(new Diemond(), new Popcorn()),
+                10000,
+                (short) 3000
             );
-        ImageProcessor imageProcessor = new GamaCorrection(0.7);
+        ImageProcessor imageProcessor = new GamaCorrection(0.55);
         imageProcessor.process(result);
-        Path path = Path.of("C:/Users/Kroflex/Desktop/test");
+        Path path = Path.of("C:/Users/Kroflex/Desktop/single");
         ImageUtils.save(result, path, ImageFormat.PNG);
+    }
+
+
+    private static Stream<Arguments> renderers() {
+        return Stream.of(
+            Arguments.of(new MultiRenderer()),
+            Arguments.of(new SingleRenderer())
+        );
     }
 }

@@ -21,10 +21,6 @@ public record FractalImage(Pixel[][] data, int width, int height) {
         data[y][x] = newPixel;
     }
 
-    public void increasePixelHitCount(int x, int y) {
-        data[y][x] = data[y][x].increaseHitCount();
-    }
-
     public void updatePixelColor(int x, int y, Color color){
         data[y][x] = data[y][x].setNewColor(color);
     }

@@ -1,4 +1,4 @@
-package edu.project4;
+package edu.project4.Render;
 
 import edu.project4.Records.FractalImage;
 import edu.project4.Records.Pixel;
@@ -10,7 +10,7 @@ import edu.project4.Transformations.Transformation;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Renderer {
+public class SingleRenderer implements Renderer{
     private final double MIN_X = -1.777;
     private final double MAX_X = 1.777;
     private final double MIN_Y = -1;
@@ -46,8 +46,7 @@ public class Renderer {
                         } else {
                             currentPixel = currentPixel.mixWithAnotherColor(currentCoeff.color());
                         }
-                        canvas.setPixel(x, y, currentPixel);
-                        canvas.increasePixelHitCount(x, y);
+                        canvas.setPixel(x, y, currentPixel.increaseHitCount());
                     }
                 }
             }
