@@ -10,7 +10,7 @@ public class GamaCorrection implements ImageProcessor {
 
     private final double gamma;
 
-    public GamaCorrection(double gamma){
+    public GamaCorrection(double gamma) {
         this.gamma = gamma;
     }
 

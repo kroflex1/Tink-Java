@@ -8,7 +8,7 @@ public record Pixel(Color color, int hitCount) {
         this(color, 0);
     }
 
-    public static Pixel Black() {
+    public static Pixel createBlack() {
         return new Pixel(Color.BLACK, 0);
     }
 
