@@ -24,7 +24,7 @@ public class ImageUtils {
             );
             ImageIO.write(bufferedImage, format.toString().toLowerCase(), filePath.toFile());
         } catch (IOException e) {
-            System.out.println("Invalid file path");
+            throw new RuntimeException(e);
         }
     }
 

@@ -2,7 +2,6 @@ package edu.project4.Transformations;
 
 import edu.project4.Records.Coefficients;
 import edu.project4.Records.Point;
-import edu.project4.Render.MultiRenderer;
 
 public class Popcorn implements Transformation {
     private final static double MULTIPLIER = 3;
@@ -14,5 +13,4 @@ public class Popcorn implements Transformation {
             point.x() + coefficients.f() * Math.sin(Math.tan(MULTIPLIER * point.x()))
         );
     }
-
 }
