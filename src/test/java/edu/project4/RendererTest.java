@@ -12,8 +12,6 @@ import edu.project4.Render.Renderer;
 import edu.project4.Render.SingleRenderer;
 import edu.project4.Transformations.Diemond;
 import edu.project4.Transformations.Popcorn;
-import edu.project4.Transformations.Sinusoidal;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -26,7 +24,7 @@ public class RendererTest {
     @MethodSource("renderers")
     void testRenderer(Renderer renderer) {
         Rect rect = new Rect(0, 0, 1920, 1080);
-        FractalImage canvas = FractalImage.createEmptyFractalImage(1920, 1080);
+        FractalImage canvas = new FractalImage(1920, 1080);
         FractalImage result =
             renderer.render(
                 canvas,
@@ -44,7 +42,7 @@ public class RendererTest {
             );
         ImageProcessor imageProcessor = new GamaCorrection(0.55);
         imageProcessor.process(result);
-        Path path = Path.of("C:/Users/Kroflex/Desktop/single");
+        Path path = Path.of("C:/Users/Kroflex/Desktop/flames/" + renderer.getClass().getName());
         ImageUtils.save(result, path, ImageFormat.PNG);
     }
 

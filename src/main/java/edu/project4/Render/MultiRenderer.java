@@ -12,11 +12,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -29,9 +32,8 @@ public class MultiRenderer implements Renderer {
     private final double MIN_Y = -1;
     private final double MAX_Y = 1;
     private final static Transformation AFFINE_TRANSFORMATION = new Affine();
-    private final static short DEFAULT_NUMBER_OF_THREADS = 4;
+    private final static short DEFAULT_NUMBER_OF_THREADS = 1;
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-    private final Lock writeLock = lock.writeLock();
 
     public FractalImage render(
         FractalImage canvas,
@@ -42,46 +44,44 @@ public class MultiRenderer implements Renderer {
         short iterPerSample
     ) {
         ExecutorService executor = Executors.newFixedThreadPool(DEFAULT_NUMBER_OF_THREADS);
-        List<CompletableFuture<Map<Coordinate, Pixel>>> tasks = new ArrayList<>();
+        ConcurrentHashMap<Coordinate, Pixel> newPixels = new ConcurrentHashMap<>();
+        CountDownLatch countDownLatch = new CountDownLatch(DEFAULT_NUMBER_OF_THREADS);
         for (int i = 0; i < DEFAULT_NUMBER_OF_THREADS; ++i) {
-            tasks.add(CompletableFuture.supplyAsync(() -> partRender(
-                world,
-                coefficients,
-                transformations,
-                samples / DEFAULT_NUMBER_OF_THREADS,
-                iterPerSample
-            ), executor));
-        }
-        for (var task : tasks) {
-            try {
-                for (Map.Entry<Coordinate, Pixel> inf : task.get().entrySet()) {
-                    Pixel pixelOnCanvas = canvas.getPixel(inf.getKey().x, inf.getKey().y());
-                    if (pixelOnCanvas.hitCount() == 0) {
-                        canvas.setPixel(inf.getKey().x, inf.getKey().y(), inf.getValue());
-                    } else {
-                        Color updatedColor = pixelOnCanvas.mixWithAnotherColor(inf.getValue().color()).color();
-                        Pixel updatedPixel =
-                            new Pixel(updatedColor, pixelOnCanvas.hitCount() + inf.getValue().hitCount());
-                        canvas.setPixel(inf.getKey().x, inf.getKey().y(), updatedPixel);
-                    }
-
+            executor.submit(() -> {
+                    partRender(world, coefficients, transformations, samples / DEFAULT_NUMBER_OF_THREADS, iterPerSample, newPixels);
+                    countDownLatch.countDown();
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
+            );
+        }
+
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
         executor.shutdown();
+        for (Map.Entry<Coordinate, Pixel> inf : newPixels.entrySet()) {
+            Pixel pixelOnCanvas = canvas.getPixel(inf.getKey().x, inf.getKey().y());
+            if (pixelOnCanvas.hitCount() == 0) {
+                canvas.setPixel(inf.getKey().x(), inf.getKey().y(), inf.getValue());
+            } else {
+                Color updatedColor = pixelOnCanvas.mixWithAnotherColor(inf.getValue().color()).color();
+                Pixel updatedPixel =
+                    new Pixel(updatedColor, pixelOnCanvas.hitCount() + inf.getValue().hitCount());
+                canvas.setPixel(inf.getKey().x(), inf.getKey().y(), updatedPixel);
+            }
+        }
         return canvas;
     }
 
-    private Map<Coordinate, Pixel> partRender(
+    private void partRender(
         Rect world,
         List<Coefficients> coefficients,
         List<Transformation> transformations,
         int samples,
-        short iterPerSample
+        short iterPerSample,
+        ConcurrentHashMap<Coordinate, Pixel> newPixels
     ) {
-        Map<Coordinate, Pixel> result = new HashMap<>();
         ThreadLocalRandom random = ThreadLocalRandom.current();
         for (int num = 0; num < samples; ++num) {
             Point newPoint = new Point(random.nextDouble(MIN_X, MAX_X), random.nextDouble(MIN_Y, MAX_Y));
@@ -98,20 +98,23 @@ public class MultiRenderer implements Renderer {
                     int y = (int) (world.height() - (MAX_Y - newPoint.y()) / (MAX_Y - MIN_Y) * world.height());
                     if (world.contains(new Point(x, y))) {
                         Coordinate currentCoordinate = new Coordinate(x, y);
-                        if (!result.containsKey(currentCoordinate)) {
-                            result.put(currentCoordinate, new Pixel(coeff.color(), 1));
+                        if (!newPixels.containsKey(currentCoordinate)) {
+                            newPixels.put(currentCoordinate, new Pixel(coeff.color(), 1));
                         } else {
-                            Pixel pixel = result.get(currentCoordinate);
-                            result.put(currentCoordinate, pixel.mixWithAnotherColor(coeff.color()).increaseHitCount());
+                            Pixel pixel = newPixels.get(currentCoordinate);
+                            newPixels.put(currentCoordinate, pixel.mixWithAnotherColor(coeff.color()).increaseHitCount()
+                            );
                         }
                     }
                 }
             }
         }
-        return result;
     }
 
     private record Coordinate(int x, int y) {
 
     }
 }
+
+
+

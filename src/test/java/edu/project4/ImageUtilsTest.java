@@ -23,7 +23,7 @@ public class ImageUtilsTest {
         int width = 500;
         int height = 500;
         Path pathToImage = tempDir.resolve("testImage");
-        FractalImage fractalImage = FractalImage.createEmptyFractalImage(width, height);
+        FractalImage fractalImage = new FractalImage(width, height);
         ImageUtils.save(fractalImage, pathToImage, imageFormat);
 
         Path exceptPath = tempDir.resolve("testImage" + "." + imageFormat.toString().toLowerCase());

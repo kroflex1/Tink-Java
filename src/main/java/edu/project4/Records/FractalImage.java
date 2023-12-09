@@ -2,15 +2,28 @@ package edu.project4.Records;
 
 import java.awt.Color;
 
-public record FractalImage(Pixel[][] data, int width, int height) {
-    public static FractalImage createEmptyFractalImage(int width, int height) {
-        Pixel[][] pixels = new Pixel[height][width];
+public class FractalImage {
+    private final int width;
+    private final int height;
+    private final Pixel[][] data;
+
+    public FractalImage(int width, int height) {
+        this.width = width;
+        this.height = height;
+        data = new Pixel[height][width];
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                pixels[y][x] = Pixel.Black();
+                data[y][x] = Pixel.Black();
             }
         }
-        return new FractalImage(pixels, width, height);
+    }
+
+    public int width() {
+        return width;
+    }
+
+    public int height() {
+        return height;
     }
 
     public Pixel getPixel(int x, int y) {
@@ -21,7 +34,7 @@ public record FractalImage(Pixel[][] data, int width, int height) {
         data[y][x] = newPixel;
     }
 
-    public void updatePixelColor(int x, int y, Color color){
+    public void updatePixelColor(int x, int y, Color color) {
         data[y][x] = data[y][x].setNewColor(color);
     }
 }

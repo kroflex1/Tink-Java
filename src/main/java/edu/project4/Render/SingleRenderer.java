@@ -7,6 +7,7 @@ import edu.project4.Records.Rect;
 import edu.project4.Transformations.Affine;
 import edu.project4.Records.Coefficients;
 import edu.project4.Transformations.Transformation;
+import java.awt.Color;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -53,5 +54,4 @@ public class SingleRenderer implements Renderer{
         }
         return canvas;
     }
-
 }
