@@ -2,6 +2,7 @@ package edu.project4;
 
 import edu.project4.Image.ImageFormat;
 import edu.project4.Image.ImageUtils;
+import edu.project4.ImageProcessor.DihedralSymmetry;
 import edu.project4.ImageProcessor.GamaCorrection;
 import edu.project4.ImageProcessor.ImageProcessor;
 import edu.project4.Records.FractalImage;
@@ -67,29 +68,33 @@ public class RendererTest {
     ) {
         Renderer renderer = new MultiRenderer();
         FractalImage result = renderer.render(canvas, world, coefficients, transformations, samples, iterPersample);
-        ImageProcessor imageProcessor = new GamaCorrection(0.55);
-        imageProcessor.process(result);
-        Path path = Path.of("C:/Users/Kroflex/Desktop/flames/" + renderer.getClass().getName());
+        ImageProcessor dihedralSymmetry = new DihedralSymmetry();
+        ImageProcessor gamaCorrection = new GamaCorrection(0.55);
+        dihedralSymmetry.process(result);
+        gamaCorrection.process(result);
+        Path path = Path.of("C:/Users/Kroflex/Desktop/flames/" + "multi");
         ImageUtils.save(result, path, ImageFormat.PNG);
     }
 
-    @ParameterizedTest
-    @MethodSource("parameters")
-    void testSingleThreadRenderer(
-        FractalImage canvas,
-        Rect world,
-        List<Coefficients> coefficients,
-        List<Transformation> transformations,
-        int samples,
-        short iterPersample
-    ) {
-        Renderer renderer = new SingleRenderer();
-        FractalImage result = renderer.render(canvas, world, coefficients, transformations, samples, iterPersample);
-        ImageProcessor imageProcessor = new GamaCorrection(0.55);
-        imageProcessor.process(result);
-        Path path = Path.of("C:/Users/Kroflex/Desktop/flames/" + renderer.getClass().getName());
-        ImageUtils.save(result, path, ImageFormat.PNG);
-    }
+//    @ParameterizedTest
+//    @MethodSource("parameters")
+//    void testSingleThreadRenderer(
+//        FractalImage canvas,
+//        Rect world,
+//        List<Coefficients> coefficients,
+//        List<Transformation> transformations,
+//        int samples,
+//        short iterPersample
+//    ) {
+//        Renderer renderer = new SingleRenderer();
+//        FractalImage result = renderer.render(canvas, world, coefficients, transformations, samples, iterPersample);
+//        ImageProcessor gamaCorrection = new GamaCorrection(0.55);
+//        ImageProcessor dihedralSymmetry = new DihedralSymmetry();
+//        dihedralSymmetry.process(result);
+//        gamaCorrection.process(result);
+//        Path path = Path.of("C:/Users/Kroflex/Desktop/flames/" + "multi");
+//        ImageUtils.save(result, path, ImageFormat.PNG);
+//    }
 
     private static Stream<Arguments> parameters() {
         FractalImage canvas = new FractalImage(1920, 1080);
@@ -99,12 +104,12 @@ public class RendererTest {
             Coefficients.createRandomCoefficients(),
             Coefficients.createRandomCoefficients(),
             Coefficients.createRandomCoefficients(),
-            Coefficients.createRandomCoefficients(),
             Coefficients.createRandomCoefficients()
+
         );
-        List<Transformation> transformations = List.of(new Exponential(), new Diemond(), new Sinusoidal(), new Popcorn());
-        int samples = 50000;
-        short iterPerSample = (short) 1500;
+        List<Transformation> transformations = List.of(new Sinusoidal(), new Diemond());
+        int samples = 40000;
+        short iterPerSample = (short) 3000;
         return Stream.of(
             Arguments.of(canvas, rect, coefficients, transformations, samples, iterPerSample)
         );
