@@ -23,7 +23,7 @@ public interface Transformation {
         return Math.atan2(point.x(), point.y());
     }
 
-    default double getRandomOmega(){
+    default double getRandomOmega() {
         return ThreadLocalRandom.current().nextInt(2) == 0 ? 0 : Math.PI;
     }
 }

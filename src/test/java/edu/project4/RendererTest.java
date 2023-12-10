@@ -16,6 +16,7 @@ import edu.project4.Transformations.Diamond;
 import edu.project4.Transformations.Exponential;
 import edu.project4.Transformations.Handkerchief;
 import edu.project4.Transformations.Julia;
+import edu.project4.Transformations.Sinusoidal;
 import edu.project4.Transformations.Spiral;
 import edu.project4.Transformations.Transformation;
 import org.junit.jupiter.api.Test;
@@ -56,52 +57,5 @@ public class RendererTest {
         long simpleRendererTime = endTime - startTime;
 
         assertTrue(multiRendererTime < simpleRendererTime);
-    }
-
-    @ParameterizedTest
-    @MethodSource("parameters")
-    void testMultiThreadRenderer(
-        FractalImage canvas,
-        Rect world,
-        List<Coefficients> coefficients,
-        List<Transformation> transformations,
-        int samples,
-        short iterPersample
-    ) {
-        Renderer renderer = new MultiRenderer();
-        FractalImage result = renderer.render(canvas, world, coefficients, transformations, samples, iterPersample);
-//        ImageProcessor rotationalSymmetry = new RotationalSymmetry();
-//        rotationalSymmetry.process(result);
-        ImageProcessor gamaCorrection = new GamaCorrection(0.6);
-        gamaCorrection.process(result);
-        Path path = Path.of("C:/Users/Kroflex/Desktop/flames/flame");
-        ImageUtils.save(result, path, ImageFormat.PNG);
-    }
-
-
-    private static Stream<Arguments> parameters() {
-        FractalImage canvas = new FractalImage(1920, 1080);
-        Rect rect = new Rect(0, 0, 1920, 1080);
-        List<Coefficients> coefficients = List.of(
-            Coefficients.createRandomCoefficients(),
-            Coefficients.createRandomCoefficients(),
-            Coefficients.createRandomCoefficients(),
-            Coefficients.createRandomCoefficients(),
-            Coefficients.createRandomCoefficients()
-
-        );
-        List<Transformation> transformations = List.of(new Julia());
-        int samples = 50000;
-        short iterPerSample = (short) 3000;
-        return Stream.of(
-            Arguments.of(canvas, rect, coefficients, transformations, samples, iterPerSample)
-        );
-    }
-
-    private static Stream<Arguments> renderers() {
-        return Stream.of(
-            Arguments.of(new MultiRenderer()),
-            Arguments.of(new SingleRenderer())
-        );
     }
 }

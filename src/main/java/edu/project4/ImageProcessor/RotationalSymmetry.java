@@ -18,6 +18,9 @@ public class RotationalSymmetry implements ImageProcessor {
     }
 
     public void process(FractalImage image, int numberOfSymmetry) {
+        if (numberOfSymmetry <= 1) {
+            throw new IllegalArgumentException("Number of symmetries cannot be less than 1");
+        }
         double angle = 2 * Math.PI / numberOfSymmetry;
         double stepAngle = 2 * Math.PI / numberOfSymmetry;
         List<Map<Point, Pixel>> result = new ArrayList<>();
