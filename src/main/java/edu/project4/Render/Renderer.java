@@ -67,7 +67,7 @@ public abstract class Renderer {
                     && newPoint.isBelongsToSegmentY(MIN_X, MAX_X)) {
                     int x = (int) (world.width() - (MAX_X - newPoint.x()) / (MAX_X - MIN_X) * world.width());
                     int y = (int) (world.height() - (MAX_Y - newPoint.y()) / (MAX_Y - MIN_Y) * world.height());
-                    if (world.contains(new Point(x, y)) && canvas.isInBoundary(x,y)) {
+                    if (world.contains(new Point(x, y)) && canvas.isInBoundary(x, y)) {
                         Coordinate currentCoordinate = new Coordinate(x, y);
                         if (!currentColoredPixels.containsKey(currentCoordinate)) {
                             currentColoredPixels.put(currentCoordinate, new Pixel(coeff.color(), 1));

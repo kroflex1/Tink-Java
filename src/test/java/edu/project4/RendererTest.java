@@ -58,4 +58,9 @@ public class RendererTest {
 
         assertTrue(multiRendererTime < simpleRendererTime);
     }
+
+    @Test
+    void test(){
+        Path folder = Path.of()
+    }
 }
