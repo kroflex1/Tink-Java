@@ -20,7 +20,7 @@ public class SingleRenderer extends Renderer {
         short iterPerSample
     ) {
         Map<Coordinate, Pixel> newPixels = new HashMap<>();
-        fillWithNewPixels(world, coefficients, transformations, samples, iterPerSample, newPixels);
+        fillWithNewPixels(canvas, world, coefficients, transformations, samples, iterPerSample, newPixels);
         return displayPixelsOnCanvas(canvas, newPixels);
     }
 }

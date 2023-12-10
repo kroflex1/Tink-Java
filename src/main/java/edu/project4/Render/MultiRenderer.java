@@ -41,6 +41,7 @@ public class MultiRenderer extends Renderer {
         for (int i = 0; i < numberOFThreads * 2; ++i) {
             executor.submit(() -> {
                     fillWithNewPixels(
+                        canvas,
                         world,
                         coefficients,
                         transformations,
