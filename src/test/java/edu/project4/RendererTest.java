@@ -2,19 +2,21 @@ package edu.project4;
 
 import edu.project4.Image.ImageFormat;
 import edu.project4.Image.ImageUtils;
-import edu.project4.ImageProcessor.DihedralSymmetry;
 import edu.project4.ImageProcessor.GamaCorrection;
 import edu.project4.ImageProcessor.ImageProcessor;
+import edu.project4.ImageProcessor.RotationalSymmetry;
 import edu.project4.Records.FractalImage;
 import edu.project4.Records.Rect;
 import edu.project4.Records.Coefficients;
 import edu.project4.Render.MultiRenderer;
 import edu.project4.Render.Renderer;
 import edu.project4.Render.SingleRenderer;
-import edu.project4.Transformations.Diemond;
+import edu.project4.Transformations.Affine;
+import edu.project4.Transformations.Diamond;
 import edu.project4.Transformations.Exponential;
-import edu.project4.Transformations.Popcorn;
-import edu.project4.Transformations.Sinusoidal;
+import edu.project4.Transformations.Handkerchief;
+import edu.project4.Transformations.Julia;
+import edu.project4.Transformations.Spiral;
 import edu.project4.Transformations.Transformation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -68,33 +70,14 @@ public class RendererTest {
     ) {
         Renderer renderer = new MultiRenderer();
         FractalImage result = renderer.render(canvas, world, coefficients, transformations, samples, iterPersample);
-        ImageProcessor dihedralSymmetry = new DihedralSymmetry();
-        ImageProcessor gamaCorrection = new GamaCorrection(0.55);
-        dihedralSymmetry.process(result);
+//        ImageProcessor rotationalSymmetry = new RotationalSymmetry();
+//        rotationalSymmetry.process(result);
+        ImageProcessor gamaCorrection = new GamaCorrection(0.6);
         gamaCorrection.process(result);
-        Path path = Path.of("C:/Users/Kroflex/Desktop/flames/" + "multi");
+        Path path = Path.of("C:/Users/Kroflex/Desktop/flames/flame");
         ImageUtils.save(result, path, ImageFormat.PNG);
     }
 
-//    @ParameterizedTest
-//    @MethodSource("parameters")
-//    void testSingleThreadRenderer(
-//        FractalImage canvas,
-//        Rect world,
-//        List<Coefficients> coefficients,
-//        List<Transformation> transformations,
-//        int samples,
-//        short iterPersample
-//    ) {
-//        Renderer renderer = new SingleRenderer();
-//        FractalImage result = renderer.render(canvas, world, coefficients, transformations, samples, iterPersample);
-//        ImageProcessor gamaCorrection = new GamaCorrection(0.55);
-//        ImageProcessor dihedralSymmetry = new DihedralSymmetry();
-//        dihedralSymmetry.process(result);
-//        gamaCorrection.process(result);
-//        Path path = Path.of("C:/Users/Kroflex/Desktop/flames/" + "multi");
-//        ImageUtils.save(result, path, ImageFormat.PNG);
-//    }
 
     private static Stream<Arguments> parameters() {
         FractalImage canvas = new FractalImage(1920, 1080);
@@ -107,8 +90,8 @@ public class RendererTest {
             Coefficients.createRandomCoefficients()
 
         );
-        List<Transformation> transformations = List.of(new Sinusoidal(), new Diemond());
-        int samples = 40000;
+        List<Transformation> transformations = List.of(new Julia());
+        int samples = 50000;
         short iterPerSample = (short) 3000;
         return Stream.of(
             Arguments.of(canvas, rect, coefficients, transformations, samples, iterPerSample)
