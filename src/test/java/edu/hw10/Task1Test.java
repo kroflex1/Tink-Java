@@ -1,5 +1,7 @@
 package edu.hw10;
 
+import edu.hw10.Task1.Max;
+import edu.hw10.Task1.Min;
 import edu.hw10.Task1.RandomObjectGenerator;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
@@ -7,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Task1Test {
     RandomObjectGenerator rog = new RandomObjectGenerator();
@@ -60,6 +63,20 @@ public class Task1Test {
         assertEquals("Not found public static factory method in this class", exception.getMessage());
     }
 
+    @Test
+    void testClassWithMinAndMaxAnnotation() {
+        ClassWithAnnotation classWithAnnotation = rog.nextObject(ClassWithAnnotation.class);
+        assertNotNull(classWithAnnotation);
+        assertTrue(classWithAnnotation.age >= 10 && classWithAnnotation.age <= 90);
+    }
+
+    @Test
+    void testClassWithMinAndMaxAnnotation2() {
+        ClassWithAnnotation classWithAnnotation =(ClassWithAnnotation) rog.nextObject(ClassWithAnnotation.class, "create");
+        assertNotNull(classWithAnnotation);
+        assertTrue(classWithAnnotation.age >= 10 && classWithAnnotation.age <= 90);
+    }
+
     public static class Person {
         public Integer age;
         public String name;
@@ -78,19 +95,31 @@ public class Task1Test {
         }
     }
 
-    public class FactoryClass {
+    public static class FactoryClass {
         public static Person createPerson(Integer age, String name, Boolean isParent) {
             return new Person(age, name, isParent);
         }
     }
 
-    public class ClassWithComplexStructures {
+    public static class ClassWithComplexStructures {
         private LocalDate date;
         private Double numberOfPeople;
 
         public ClassWithComplexStructures(LocalDate date, Double numberOfPeople) {
             this.date = date;
             this.numberOfPeople = numberOfPeople;
+        }
+    }
+
+    public static class ClassWithAnnotation {
+        public int age;
+
+        public ClassWithAnnotation(@Min(minValue = 10)  @Max(maxValue = 20)  int age) {
+            this.age = age;
+        }
+
+        public static ClassWithAnnotation createNew(@Min(minValue = 10) @Max(maxValue = 20) int age) {
+            return new ClassWithAnnotation(age);
         }
     }
 }

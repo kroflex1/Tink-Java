@@ -1,29 +1,35 @@
 package edu.hw10.Task1;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import org.jetbrains.annotations.Nullable;
 
 public class RandomObjectGenerator {
-    private final static Map<Class<?>, Supplier<?>> BLANKS = new HashMap<>() {{
-        put(Integer.class, () -> 1);
-        put(int.class, () -> 1);
-        put(Double.class, () -> 1.0);
-        put(double.class, () -> 1.0);
-        put(Short.class, () -> 1);
-        put(short.class, () -> 1);
-        put(Long.class, () -> 1);
-        put(long.class, () -> 1);
-        put(Boolean.class, () -> true);
-        put(boolean.class, () -> true);
-        put(String.class, () -> "test");
+    private final static Map<Class<?>, Function<Parameter, Object>> BLANKS = new HashMap<>() {{
+        put(Integer.class, RandomObjectGenerator::getIntegerValue);
+        put(int.class, RandomObjectGenerator::getIntegerValue);
+        put(Double.class, (clazz) -> 1.0);
+        put(double.class, (clazz) -> 1.0);
+        put(Short.class, (clazz) -> 1);
+        put(short.class, (clazz) -> 1);
+        put(Long.class, (clazz) -> 1);
+        put(long.class, (clazz) -> 1);
+        put(Boolean.class, (clazz) -> true);
+        put(boolean.class, (clazz) -> true);
+        put(String.class, (clazz) -> "test");
     }};
+
+    private final static ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 
     public <T> T nextObject(Class<T> classInfo) {
         Constructor<T> constructor = getPublicConstructor(classInfo);
@@ -46,7 +52,7 @@ public class RandomObjectGenerator {
             if (constructor.getParameterCount() == 0) {
                 return constructor.newInstance();
             }
-            Object[] parameters = initializeParameters(constructor.getParameterTypes());
+            Object[] parameters = initializeParameters(constructor.getParameters());
             return constructor.newInstance(parameters);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
@@ -54,7 +60,7 @@ public class RandomObjectGenerator {
     }
 
     private Object initializeObjectUsingFactoryMethod(Method factoryMethod) {
-        Object[] parameters = initializeParameters(factoryMethod.getParameterTypes());
+        Object[] parameters = initializeParameters(factoryMethod.getParameters());
         try {
             return factoryMethod.invoke(null, parameters);
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -62,13 +68,14 @@ public class RandomObjectGenerator {
         }
     }
 
-    private Object[] initializeParameters(Class<?>[] parameterTypes) {
+    private Object[] initializeParameters(Parameter[] parameterTypes) {
         Object[] parameters = new Object[parameterTypes.length];
         for (int i = 0; i < parameterTypes.length; ++i) {
-            if (BLANKS.containsKey(parameterTypes[i])) {
-                parameters[i] = BLANKS.get(parameterTypes[i]).get();
+            Parameter currentParameter = parameterTypes[i];
+            if (BLANKS.containsKey(currentParameter.getType())) {
+                parameters[i] = BLANKS.get(currentParameter.getType()).apply(currentParameter);
             } else {
-                parameters[i] = BLANKS.getOrDefault(parameterTypes[i], null);
+                parameters[i] = null;
             }
         }
         return parameters;
@@ -102,5 +109,22 @@ public class RandomObjectGenerator {
             }
         }
         return resultConstructor;
+    }
+
+    private static Integer getIntegerValue(Parameter parameter) {
+        int minValue = Integer.MIN_VALUE;
+        int maxValue = Integer.MAX_VALUE - 1;
+        try {
+            Min minAnnotation = parameter.getAnnotation(Min.class);
+            minValue = minAnnotation.minValue();
+        } catch (NullPointerException e) {
+        }
+        try {
+            Max minAnnotation = parameter.getAnnotation(Max.class);
+            maxValue = minAnnotation.maxValue();
+        } catch (NullPointerException e) {
+
+        }
+        return RANDOM.nextInt(minValue, maxValue + 1);
     }
 }
