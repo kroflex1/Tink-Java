@@ -1,6 +1,5 @@
 package edu.hw10.Task1;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -10,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,13 +28,17 @@ public class RandomObjectGenerator {
     }};
 
     private final static ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
+    private final static String ERROR_MESSAGE_FOR_CONSTRUCTOR =
+        "Class doesn`t have public constructor or it`s impossible to initialize constructor parameters";
+    private final static String ERROR_MESSAGE_FOR_FACTORY_METHOD =
+        "Class doesn`t have public static factory method or it`s impossible to initialize factory method parameters";
 
     public <T> T nextObject(Class<T> classInfo) {
         Constructor<T> constructor = getPublicConstructor(classInfo);
         if (constructor != null) {
             return initializeObjectUsingConstructor(constructor);
         }
-        throw new IllegalArgumentException("This class does not have public constructor");
+        throw new IllegalArgumentException(ERROR_MESSAGE_FOR_CONSTRUCTOR);
     }
 
     public Object nextObject(Class<?> classInfo, String regexForFactoryMethodName) {
@@ -44,7 +46,7 @@ public class RandomObjectGenerator {
         if (factoryMethod != null) {
             return initializeObjectUsingFactoryMethod(factoryMethod);
         }
-        throw new IllegalArgumentException("Not found public static factory method in this class");
+        throw new IllegalArgumentException(ERROR_MESSAGE_FOR_FACTORY_METHOD);
     }
 
     private <T> T initializeObjectUsingConstructor(Constructor<T> constructor) {
@@ -88,7 +90,8 @@ public class RandomObjectGenerator {
         for (Method method : classInfo.getDeclaredMethods()) {
             int methodModifiers = method.getModifiers();
             if (pattern.matcher(method.getName()).find() && !method.getReturnType().equals(void.class)
-                && Modifier.isPublic(methodModifiers) && Modifier.isStatic(methodModifiers)) {
+                && Modifier.isPublic(methodModifiers) && Modifier.isStatic(methodModifiers)
+                && isPossibleToCreateParameters(method.getParameters())) {
                 factoryMethod = method;
                 break;
             }
@@ -99,31 +102,34 @@ public class RandomObjectGenerator {
     @Nullable
     private <T> Constructor<T> getPublicConstructor(Class<T> classInfo) {
         Constructor<T>[] constructors = (Constructor<T>[]) classInfo.getConstructors();
-        Constructor<T> resultConstructor = null;
-        int minNumberOfParameters = Integer.MAX_VALUE;
         for (Constructor<T> currentConstructor : constructors) {
-            if (currentConstructor.getParameterCount() < minNumberOfParameters
-                && Modifier.isPublic(currentConstructor.getModifiers())) {
-                minNumberOfParameters = currentConstructor.getParameterCount();
-                resultConstructor = currentConstructor;
+            if (Modifier.isPublic(currentConstructor.getModifiers())
+                && isPossibleToCreateParameters(currentConstructor.getParameters())) {
+                return currentConstructor;
             }
         }
-        return resultConstructor;
+        return null;
+    }
+
+    private static boolean isPossibleToCreateParameters(Parameter[] parameters) {
+        for (Parameter parameter : parameters) {
+            if (parameter.isAnnotationPresent(NotNull.class) && !BLANKS.containsKey(parameter.getClass())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static Integer getIntegerValue(Parameter parameter) {
         int minValue = Integer.MIN_VALUE;
         int maxValue = Integer.MAX_VALUE - 1;
-        try {
+        if (parameter.isAnnotationPresent(Min.class)) {
             Min minAnnotation = parameter.getAnnotation(Min.class);
             minValue = minAnnotation.minValue();
-        } catch (NullPointerException e) {
         }
-        try {
+        if (parameter.isAnnotationPresent(Max.class)) {
             Max minAnnotation = parameter.getAnnotation(Max.class);
             maxValue = minAnnotation.maxValue();
-        } catch (NullPointerException e) {
-
         }
         return RANDOM.nextInt(minValue, maxValue + 1);
     }

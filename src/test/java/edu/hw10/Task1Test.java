@@ -2,6 +2,7 @@ package edu.hw10;
 
 import edu.hw10.Task1.Max;
 import edu.hw10.Task1.Min;
+import edu.hw10.Task1.NotNull;
 import edu.hw10.Task1.RandomObjectGenerator;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
@@ -53,14 +54,20 @@ public class Task1Test {
     void testCantFindFactoryMethodWithRegex() {
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
             rog.nextObject(FactoryClass.class, "make"));
-        assertEquals("Not found public static factory method in this class", exception.getMessage());
+        assertEquals(
+            "Class doesn`t have public static factory method or it`s impossible to initialize factory method parameters",
+            exception.getMessage()
+        );
     }
 
     @Test
     void testCantFindPublicAndStaticFactoryMethod() {
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
             rog.nextObject(PersonRecord.class, "create"));
-        assertEquals("Not found public static factory method in this class", exception.getMessage());
+        assertEquals(
+            "Class doesn`t have public static factory method or it`s impossible to initialize factory method parameters",
+            exception.getMessage()
+        );
     }
 
     @Test
@@ -72,9 +79,20 @@ public class Task1Test {
 
     @Test
     void testClassWithMinAndMaxAnnotation2() {
-        ClassWithAnnotation classWithAnnotation =(ClassWithAnnotation) rog.nextObject(ClassWithAnnotation.class, "create");
+        ClassWithAnnotation classWithAnnotation =
+            (ClassWithAnnotation) rog.nextObject(ClassWithAnnotation.class, "create");
         assertNotNull(classWithAnnotation);
         assertTrue(classWithAnnotation.age >= 10 && classWithAnnotation.age <= 90);
+    }
+
+    @Test
+    void testCantCreateClassWithNotNullAnnotation() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+            rog.nextObject(ClassWithNotNullAnnotation.class));
+        assertEquals(
+            "Class doesn`t have public constructor or it`s impossible to initialize constructor parameters",
+            exception.getMessage()
+        );
     }
 
     public static class Person {
@@ -114,12 +132,24 @@ public class Task1Test {
     public static class ClassWithAnnotation {
         public int age;
 
-        public ClassWithAnnotation(@Min(minValue = 10)  @Max(maxValue = 20)  int age) {
+        public ClassWithAnnotation(@Min(minValue = 10) @Max(maxValue = 20) int age) {
             this.age = age;
         }
 
         public static ClassWithAnnotation createNew(@Min(minValue = 10) @Max(maxValue = 20) int age) {
             return new ClassWithAnnotation(age);
+        }
+    }
+
+    public static class ClassWithNotNullAnnotation {
+        public String name;
+        public String surname;
+        public LocalDate birthday;
+
+        public ClassWithNotNullAnnotation(String name, String surname, @NotNull LocalDate birthday) {
+            this.name = name;
+            this.surname = surname;
+            this.birthday = birthday;
         }
     }
 }
