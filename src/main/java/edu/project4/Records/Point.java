@@ -6,7 +6,7 @@ public record Point(double x, double y) {
         return x >= start && x <= end;
     }
 
-    public boolean isBelongsToSegmentY(double start, double end) {
+    public boolean belongsTo(double start, double end) {
         checkSegment(start, end);
         return y >= start && y <= end;
     }

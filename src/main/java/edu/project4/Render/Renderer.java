@@ -35,7 +35,7 @@ public abstract class Renderer {
             if (pixelOnCanvas.hitCount() == 0) {
                 canvas.setPixel(inf.getKey().x(), inf.getKey().y(), inf.getValue());
             } else {
-                Color updatedColor = pixelOnCanvas.mixWithAnotherColor(inf.getValue().color()).color();
+                Color updatedColor = pixelOnCanvas.mix(inf.getValue().color()).color();
                 Pixel updatedPixel =
                     new Pixel(updatedColor, pixelOnCanvas.hitCount() + inf.getValue().hitCount());
                 canvas.setPixel(inf.getKey().x(), inf.getKey().y(), updatedPixel);
@@ -64,10 +64,10 @@ public abstract class Renderer {
                     coeff
                 );
                 if (step >= 0 && newPoint.isBelongsToSegmentX(MIN_X, MAX_X)
-                    && newPoint.isBelongsToSegmentY(MIN_X, MAX_X)) {
+                    && newPoint.belongsTo(MIN_X, MAX_X)) {
                     int x = (int) (world.width() - (MAX_X - newPoint.x()) / (MAX_X - MIN_X) * world.width());
                     int y = (int) (world.height() - (MAX_Y - newPoint.y()) / (MAX_Y - MIN_Y) * world.height());
-                    if (world.contains(new Point(x, y)) && canvas.isInBoundary(x, y)) {
+                    if (world.contains(new Point(x, y)) && canvas.contains(x, y)) {
                         Coordinate currentCoordinate = new Coordinate(x, y);
                         if (!currentColoredPixels.containsKey(currentCoordinate)) {
                             currentColoredPixels.put(currentCoordinate, new Pixel(coeff.color(), 1));
@@ -75,7 +75,7 @@ public abstract class Renderer {
                             Pixel pixel = currentColoredPixels.get(currentCoordinate);
                             currentColoredPixels.replace(
                                 currentCoordinate,
-                                pixel.mixWithAnotherColor(coeff.color()).increaseHitCount()
+                                pixel.mix(coeff.color()).increaseHitCount()
                             );
                         }
                     }

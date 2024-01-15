@@ -62,7 +62,7 @@ public class RotationalSymmetry implements ImageProcessor {
             if (oldPixel.color() == Color.BLACK) {
                 newColor = newPixel.color();
             } else {
-                newColor = oldPixel.mixWithAnotherColor(newPixel.color()).color();
+                newColor = oldPixel.mix(newPixel.color()).color();
             }
             image.setPixel(x, y, new Pixel(newColor, oldPixel.hitCount() + newPixel.hitCount()));
         }

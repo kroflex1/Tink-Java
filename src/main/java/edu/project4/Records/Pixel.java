@@ -16,13 +16,11 @@ public record Pixel(Color color, int hitCount) {
         return new Pixel(color, hitCount + 1);
     }
 
-    public Pixel setNewColor(Color newColor) {
+    public Pixel setColor(Color newColor) {
         return new Pixel(newColor);
     }
 
-
-
-    public Pixel mixWithAnotherColor(Color otherColor) {
+    public Pixel mix(Color otherColor) {
         Color mixedColor = new Color(
             (color.getRed() + otherColor.getRed()) / 2,
             (color.getGreen() + otherColor.getGreen()) / 2,

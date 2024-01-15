@@ -3,7 +3,6 @@ package edu.project4;
 import edu.project4.Records.Pixel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import java.awt.Color;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +24,7 @@ public class PixelTest {
         Color secondColor = new Color(100, 40, 30);
         Color exceptColor = new Color(100/2, 45, 27);
         Pixel pixel = new Pixel(firstColor, 0);
-        pixel = pixel.mixWithAnotherColor(secondColor);
+        pixel = pixel.mix(secondColor);
         assertEquals(exceptColor, pixel.color());
     }
 

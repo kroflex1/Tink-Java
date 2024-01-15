@@ -26,7 +26,7 @@ public class FractalImage {
         return height;
     }
 
-    public boolean isInBoundary(int x, int y) {
+    public boolean contains(int x, int y) {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
 
@@ -39,6 +39,6 @@ public class FractalImage {
     }
 
     public void updatePixelColor(int x, int y, Color color) {
-        data[y][x] = data[y][x].setNewColor(color);
+        data[y][x] = data[y][x].setColor(color);
     }
 }
